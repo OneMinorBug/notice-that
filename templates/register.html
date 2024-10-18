@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ block.super }}
+  <style type="text/css">
+    .grid .column {
+      max-width: 600px;
+    }
+  </style>
+{% endblock %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<!-- Page Contents -->
+<div class="ui container">
+  <div class="ui middle aligned centered grid m-padded-tb-big">
+    <div class="column">
+      <div class="ui large form">
+        <h2>Register</h2>
+        <form method="post" id="registration-form">
+          {% csrf_token %}
+          <div class="field">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            {{ form.username }}  <!-- Render username field -->
+            <span id="username-error" style="color: red;"></span>  <!-- For showing username error -->
+          </div>
+          <div class="field">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}  <!-- Render email field -->
+            <span id="email-error" style="color: red;"></span>  <!-- For showing email error -->
+          </div>
+          <div class="field">
+            <label for="{{ form.verification_code.id_for_label }}">Verification Code</label>
+            <div class="ui action input">
+              {{ form.verification_code }}  <!-- Render verification code field -->
+              <button type="button" class="ui m-primary button" id="send-code-btn">Send Code</button> <!-- Button to send code -->
+            </div>
+          </div>
+          <div class="field">
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            {{ form.password }}  <!-- Render password field -->
+          </div>
+          <div class="field">
+            <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+            {{ form.confirm_password }}  <!-- Render confirm password field -->
+          </div>
+          <br>
+          <button type="submit" class="ui m-primary button">Register</button>
+        </form>
+        <div class="ui container">
+          <br>
+          <p>Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+        </div>
+        {% if messages %}
+          <div class="ui message">
+            <ul>
+              {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/register.js' %}"></script>  
+<script src="{% static 'js/registerButton.js' %}"></script>  
+{% endblock %}

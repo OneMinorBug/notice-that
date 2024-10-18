@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<!-- Page Contents -->
+<div class="ui vertical grid m-padded-tb-big">
+  <div class="ui container">
+    <div class="ui grid">
+      <div class="five wide column">
+        <div class="ui top attached segment">
+          <div class="ui header">About Us</div>
+        </div>
+        <div class="ui attached segment">
+          <p class="m-text">Some math enthusiasts</p>
+        </div>
+        <div class="ui attached segment">
+          <div class="ui header">Contact Us</div>
+        </div>
+        <div class="ui bottom attached segment">
+          <a href="mailto:d.v.m.c.2025@gmail.com" class="ui circular icon bottom"><i class="email icon"></i></a>
+          <a href="mailto:d.v.m.c.2025@gmail.com" class="ui circular icon bottom"><i class="email icon"></i></a>
+        </div>
+      </div>
+      <div class="eleven wide column">
+        <img src={% static 'images/1.png' %} alt="" class="ui rounded image">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
