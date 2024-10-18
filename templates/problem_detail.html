@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
+	<style>
+		#editor—wrapper {
+			border: 1px solid #ccc;
+			z-index: 100; /* If you need */
+		}
+		#toolbar-container { border-bottom: 1px solid #ccc; }
+		#editor-container { height: 200px; }
+	</style>
+  <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async src="{% static 'mathjax/es5/tex-svg.js' %}"></script>
+{% endblock %}
+
+{% block title %}{{ problem.title }}{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<!-- Page Contents -->
+<div class="ui vertical grid m-padded-tb-medium">
+  <div class="ui container">
+    <div class="ui top attached segment" style="line-height: 0">
+      <h2>{{ problem.title }}</h2>
+      <div class="item">{{ problem.created_at|date:"F j, Y" }}</div>
+    </div>
+    <div class="ui attached segment m-padded-lr-large">
+      {% if problem.image %}
+        <img src="{{ problem.image.url }}" class="ui rounded fluid image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
+      {% else %}
+        <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
+      {% endif %}
+    </div>
+    <div class="ui attached segment m-padded-tb-medium m-padded-lr-big">
+      <p m-text>{{ problem.content|safe }}</p>
+    </div>
+    <div class="ui bottom attached segment m-padded-tb-medium m-padded-lr-big">
+      <form class="ui reply form" method="post">
+        {% csrf_token %}
+        <div class="field">
+          <div id="editor—wrapper">
+            <div id="toolbar-container"><!-- toolbar --></div>
+            <div id="editor-container" ><!-- editor --></div>
+          </div>
+        </div>
+        <textarea id="editor-content" name="content" style="display:none;"></textarea><!--test-->
+        <div class="ui right aligned container">
+          <button class="ui m-primary submit labeled icon button" type="submit">
+            <i class="m-primary icon edit"></i> Send
+          </button>
+        </div>
+      </form>
+      
+      {% if user_has_commented %}
+      <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
+      <!-- Display the pinned comment if it exists -->
+        <div class="ui comments">
+        {% if pinned_comment %}
+        <div class="ui comments">
+          <div class="comment">
+            <a class="avatar">
+              <img src="{{ pinned_comment.account.profile.profile_picture.url }}" 
+                   onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+            </a>
+            <div class="content">
+              <a class="author">{{ pinned_comment.account.username }}</a>
+              <div class="metadata">
+                <span class="date">{{ pinned_comment.created_at|date:"F j, Y" }}</span>
+              </div>
+              <div class="text">{{ pinned_comment.content|safe }}</div>
+              <div class="actions">
+                <a class="reply" id="reply-button-{{ pinned_comment.id }}" data-comment-id="{{ pinned_comment.id }}">Reply</a>
+              </div>
+              
+              <!-- Reply Form -->
+              <form class="ui reply form" method="post" style="display: none;" id="reply-form-{{ pinned_comment.id }}">
+                {% csrf_token %}
+                {{ reply_form.as_p }}
+                <input type="hidden" name="comment_id" value="{{ pinned_comment.id }}">
+                <div class="ui right aligned container">
+									<button class="ui m-primary submit labeled icon button" type="submit">
+										<i class="m-primary icon edit"></i> Reply
+									</button>
+								</div>
+              </form>
+
+              <!-- Display nested replies -->
+              {% for reply in pinned_comment.replies.all %}
+              <div class="comment" style="margin-left: 30px;">
+                <a class="avatar">
+                  <img src={{ reply.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+                </a>
+                <div class="content">
+                  <a class="author">{{ reply.account.username }}</a>
+                  <div class="metadata">
+                    <span class="date">{{ reply.created_at|date:"F j, Y" }}</span>
+                  </div>
+                  <div class="text">{{ reply.content|safe }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        
+        {% for comment in comments reversed %}
+          <div class="comment">
+            <a class="avatar">
+              <img src={{ comment.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+            </a>
+            <div class="content">
+              <a class="author">{{ comment.account.username }}</a>
+              <div class="metadata">
+                <span class="date">{{ comment.created_at|date:"F j, Y" }}</span>
+              </div>
+              <div class="text">{{ comment.content|safe }}</div>
+              <div class="actions">
+                <a class="reply" id="reply-button-{{ comment.id }}" data-comment-id="{{ comment.id }}">Reply</a>
+              </div>
+
+              <!-- Pin Button -->
+              {% if not pinned_comment and request.user.is_staff %}
+              <div class="actions">
+                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin Comment</a>
+              </div>
+              <form id="pin-form-{{ comment.id }}" method="post" style="display: none;">
+                  {% csrf_token %}
+                  <input type="hidden" name="pin_comment" value="{{ comment.id }}">
+              </form>
+              {% endif %}
+
+              <!-- Reply Form -->
+              <form class="ui reply form" method="post" style="display: none;" id="reply-form-{{ comment.id }}">
+                {% csrf_token %}
+                <div class="field">
+                  {{ reply_form.content }}
+                </div>
+                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                <div class="ui right aligned container">
+									<button class="ui m-primary submit labeled icon button" type="submit">
+										<i class="m-primary icon edit"></i> Reply
+									</button>
+								</div>
+              </form>
+
+              <!-- Display nested replies -->
+              {% for reply in comment.replies.all %}
+              <div class="comment" style="margin-left: 30px;">
+                <a class="avatar">
+                  <img src={{ reply.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+                </a>
+                <div class="content">
+                  <a class="author">{{ reply.account.username }}</a>
+                  <div class="metadata">
+                    <span class="date">{{ reply.created_at|date:"F j, Y" }}</span>
+                  </div>
+                  <div class="text">{{ reply.content|safe }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% else %}
+        <div class="ui icon info message">
+					<div class="content">
+						<div class="header">
+							Can't view the discussion?
+            </div>
+            You can enter the discussion after submitting your response.
+          </div>
+					<i class="icon help"></i>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
+<script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
+<script src="{% static 'js/comment.js' %}"></script>
+<script src="{% static 'js/post.js' %}"></script>
+{% endblock %}

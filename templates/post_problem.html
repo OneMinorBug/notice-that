@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ block.super }}
+	<link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
+	<style>
+		#editor—wrapper {
+			border: 1px solid #ccc;
+			z-index: 100; /* If you need */
+		}
+		#toolbar-container { border-bottom: 1px solid #ccc; }
+		#editor-container { height: 500px; }
+	</style>
+{% endblock %}
+
+{% block title %}Post{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<!-- Page Contents -->
+<div class="ui vertical grid m-padded-tb-medium">
+  <div class="ui container">
+    {% if messages %}
+      <div class="ui message">
+        <ul>
+          {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+    <div class="ui segment">
+      <h2>Post a problem</h2>
+      <form method="POST" class="ui form" action="{% url 'problems:post_problem' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="field">
+            <label for="{{ form.title.id_for_label }}">Title</label>
+            {{ form.title }}
+          </div>
+          <div class="field">
+            <label for="{{ form.image.id_for_label }}">Image</label>
+            {{ form.image }}
+          </div>
+          <div class="field">
+            <div id="editor—wrapper">
+              <div id="toolbar-container"><!-- toolbar --></div>
+              <div id="editor-container" ><!-- editor --></div>
+            </div>
+          </div>
+          <textarea id="editor-content" name="content" style="display:none;"></textarea><!--test-->
+          <div class="ui right aligned container">
+            <a type="button" class="ui button" href={% url 'problems:home' %}>Back</a>
+            <button type="submit" class="ui m-primary button" id="submit-btn">Post</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
+<script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
+<script src="{% static 'js/post.js' %}"></script>
+
+{% endblock %}
