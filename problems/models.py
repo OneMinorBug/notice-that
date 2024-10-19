@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
 
@@ -8,6 +9,9 @@ class Problem(models.Model):
     content = models.TextField(max_length=5000)
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='problem_images/', null=True, blank=True)
+    solution = models.TextField(max_length=5000, null=True, blank=True)
+    solution_post_at = models.DateTimeField(null=True, blank=True)
+    scheduled_post_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.title

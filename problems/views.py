@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_GET
@@ -7,17 +7,18 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse
 from django.contrib import messages
 from django.db.models import Q
+from django.utils import timezone
 from .models import Problem, Comment
 from .forms import ProblemForm, CommentForm
 
 # Create your views here.
 
 def home(request):
-    problems = Problem.objects.all()
+    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
     return render(request, 'home.html', {'problems': problems})
 
 def archives(request):
-    problems = Problem.objects.all()
+    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
     return render(request, 'archives.html', {'problems': problems})
 
 def about(request):
@@ -25,14 +26,16 @@ def about(request):
 
 def problem_detail(request, pk):
     problem = get_object_or_404(Problem, pk=pk)
-    pinned_comment = problem.comments.filter(pinned=True).first()
-    # Exclude pinned comment only if it exists
-    comments = problem.comments.filter(parent=None).exclude(id=pinned_comment.id if pinned_comment else None)
+    if not request.user.is_staff and problem.scheduled_post_at and problem.scheduled_post_at > timezone.now():
+        messages.error(request, "This problem is not available.")
+        return redirect('problems:home')
+    show_solution = problem.solution_post_at and problem.solution_post_at <= timezone.now()
+    pinned_comment = problem.comments.filter(pinned=True, created_at__lte=timezone.now()).first()
+    comments = problem.comments.filter(parent=None).exclude(id=pinned_comment.id if pinned_comment else None)   # Exclude pinned comment only if it exists
     user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
-
     reply_form = CommentForm()
     comment_form = CommentForm()
-    total_comments = comments.count() + (1 if pinned_comment else 0)
+    total_comments = comments.count() + (1 if pinned_comment and show_solution else 0)
 
     if request.method == 'POST':
         if 'comment_id' in request.POST:  # Check if a reply is being submitted
@@ -73,6 +76,7 @@ def problem_detail(request, pk):
         'reply_form': reply_form,
         'user_has_commented': user_has_commented,
         'total_comments': total_comments,
+        'show_solution': show_solution
     })
 
 @login_required
@@ -82,7 +86,21 @@ def post_problem(request):
         form = ProblemForm(request.POST, request.FILES)
         if form.is_valid():
             problem = form.save(commit=False)
+            if form.cleaned_data.get('scheduled_post_at'):
+                problem.scheduled_post_at = form.cleaned_data['scheduled_post_at']
+            else:
+                problem.scheduled_post_at = timezone.now()
             problem.save()
+            # Save the pinned comment if provided
+            solution_content = form.cleaned_data.get('solution')
+            if solution_content:
+                Comment.objects.create(
+                    problem=problem,
+                    account=request.user,
+                    content=solution_content,
+                    pinned=True,
+                    created_at=problem.created_at
+                )
             messages.success(request, 'Added one new problem')
             return redirect('problems:home')
         else:
@@ -95,7 +113,7 @@ def post_problem(request):
 @require_GET
 def search(request):
     q = request.GET.get('q')
-    problems = Problem.objects.filter(Q(title__icontains=q)|Q(content__icontains=q)).all()
+    problems = Problem.objects.filter(Q(title__icontains=q)|Q(content__icontains=q), scheduled_post_at__lte=timezone.now())
     return render(request, 'archives.html', {'problems': problems})
 
 @csrf_exempt

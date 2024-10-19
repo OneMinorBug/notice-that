@@ -31,6 +31,11 @@
 {{ block.super }}
 <!-- Page Contents -->
 <div class="ui vertical grid m-padded-tb-medium">
+  {% if problem.scheduled_post_at and problem.scheduled_post_at > now %}
+    <div class="ui yellow message">
+        This problem is scheduled to be posted on {{ problem.scheduled_post_at }}.
+    </div>
+  {% endif %}
   <div class="ui container">
     <div class="ui top attached segment" style="line-height: 0">
       <h2>{{ problem.title }}</h2>
@@ -67,7 +72,7 @@
       <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
       <!-- Display the pinned comment if it exists -->
         <div class="ui comments">
-        {% if pinned_comment %}
+        {% if pinned_comment and show_solution %}
         <div class="ui comments">
           <div class="comment">
             <a class="avatar">
@@ -79,7 +84,7 @@
               <div class="metadata">
                 <span class="date">{{ pinned_comment.created_at|date:"F j, Y" }}</span>
               </div>
-              <div class="text">{{ pinned_comment.content|safe }}</div>
+              <div class="text"><div class="ui m-bprimary horizontal label">Solution</div>{{ pinned_comment.content|safe }}</div>
               <div class="actions">
                 <a class="reply" id="reply-button-{{ pinned_comment.id }}" data-comment-id="{{ pinned_comment.id }}">Reply</a>
               </div>
