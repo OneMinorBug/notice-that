@@ -74,6 +74,11 @@
   font-size: 1.7em;
   font-weight: normal;
 }
+.ui.m-bprimary.label, .ui.red.labels .label {
+  background-color: #17d46b !important;
+  border-color: #17d46b !important;
+  color: #fff !important;
+}
 .ui.left.sidebar, .ui.right.sidebar {
   width: 180px;
 }

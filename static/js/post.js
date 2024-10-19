@@ -48,3 +48,41 @@ const toolbar = createToolbar({
     config: toolbarConfig,
     mode: 'simple',
 })
+
+const solutionEditorConfig = {
+    placeholder: 'Type the solution here...',
+    onChange(editor) {
+        const html = editor.getHtml()
+        document.getElementById('solution-content').value = html;
+    },
+    MENU_CONF: {
+        uploadImage: {
+            server: '/upload/',  
+            fieldName: 'file',
+            maxFileSize: 1 * 1024 * 1024,
+            allowedFileTypes: ['image/jpeg', 'image/png', 'image/heic'],
+            onSuccess(file, res) {
+                console.log('Solution image upload successful:', res)
+            },
+            onFailed(file, res) {
+                console.log('Solution image upload failed:', res)
+            },
+            onError(file, err, res) {
+                console.log('Solution image upload error:', err, res)
+            }
+        }
+    }
+}
+
+const solutionEditor = createEditor({
+    selector: '#solution-editor-container',
+    html: '<p><br></p>',
+    config: solutionEditorConfig,
+    mode: 'simple',
+})
+
+createToolbar({
+    editor: solutionEditor,
+    selector: '#solution-toolbar-container',
+    mode: 'simple',
+})
