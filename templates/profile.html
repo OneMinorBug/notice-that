@@ -3,6 +3,11 @@
 
 {% block title %}Profile{% endblock %}
 
+{% block head %}
+  {{ block.super }}
+  <meta name="title" content="Profile | Notice-That">
+{% endblock %}
+
 {% block content%}
 <!-- Nav Bar -->
 <div class="ui inverted vertical center aligned segment m-padded-tb-mini" id="nav-bar">

@@ -41,6 +41,8 @@ def problem_detail(request, pk):
     total_comments = comments.count() + (1 if pinned_comment and show_solution else 0)
 
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
         if 'comment_id' in request.POST:  # Check if a reply is being submitted
             reply_form = CommentForm(request.POST)
             if reply_form.is_valid():

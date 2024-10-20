@@ -2,6 +2,11 @@
 
 {% block title %}Home{% endblock %}
 
+{% block head %}
+  {{ block.super }}
+  <meta name="title" content="Notice-That">
+  <meta name="description" content="Discover the beauty of math on our site with fun and interesting math problems.">
+{% endblock %}
 
 {% block content %}
 <!-- Nav Bar -->
