@@ -52,21 +52,30 @@
       <p m-text>{{ problem.content|safe }}</p>
     </div>
     <div class="ui bottom attached segment m-padded-tb-medium m-padded-lr-big">
-      <form class="ui reply form" method="post">
-        {% csrf_token %}
-        <div class="field">
-          <div id="editor—wrapper">
-            <div id="toolbar-container"><!-- toolbar --></div>
-            <div id="editor-container" ><!-- editor --></div>
+      {% if user.is_authenticated %}
+        <form class="ui reply form" method="post">
+          {% csrf_token %}
+          <div class="field">
+            <div id="editor—wrapper">
+              <div id="toolbar-container"><!-- toolbar --></div>
+              <div id="editor-container" ><!-- editor --></div>
+            </div>
+          </div>
+          <textarea id="editor-content" name="content" style="display:none;"></textarea><!--test-->
+          <div class="ui right aligned container">
+            <button class="ui m-primary submit labeled icon button" type="submit">
+              <i class="m-primary icon edit"></i> Send
+            </button>
+          </div>
+        </form>
+      {% else %}
+        <div class="ui icon warning message">
+          <div class="content">
+            <div class="header">Please log in to submit your response.</div>
+            <p><a href="{% url 'accounts:login' %}">Log in</a> or <a href="{% url 'accounts:register' %}">sign up</a> to participate in the discussion.</p>
           </div>
         </div>
-        <textarea id="editor-content" name="content" style="display:none;"></textarea><!--test-->
-        <div class="ui right aligned container">
-          <button class="ui m-primary submit labeled icon button" type="submit">
-            <i class="m-primary icon edit"></i> Send
-          </button>
-        </div>
-      </form>
+      {% endif %}
       
       {% if user_has_commented %}
       <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
