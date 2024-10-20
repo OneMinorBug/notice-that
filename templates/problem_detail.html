@@ -9,7 +9,7 @@
 			z-index: 100; /* If you need */
 		}
 		#toolbar-container { border-bottom: 1px solid #ccc; }
-		#editor-container { height: 200px; }
+		#editor-container { height: 300px; }
 	</style>
   <script>
     MathJax = {
@@ -41,7 +41,7 @@
       <h2>{{ problem.title }}</h2>
       <div class="item">{{ problem.created_at|date:"F j, Y" }}</div>
     </div>
-    <div class="ui attached segment m-padded-lr-large">
+    <div class="ui attached segment m-padded-lr-large" id="problem-img-segment">
       {% if problem.image %}
         <img src="{{ problem.image.url }}" class="ui rounded fluid image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
       {% else %}

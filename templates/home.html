@@ -5,19 +5,19 @@
 
 {% block content %}
 <!-- Nav Bar -->
-<div class="ui inverted vertical center aligned segment m-padded-tb-mini">
+<div class="ui inverted vertical center aligned segment m-padded-tb-mini" id="nav-bar">
   <div class="ui header container">
     <div class="ui large secondary inverted pointing menu">
-      <a class="toc item -m-pd-mini">
+      <a class="toc item m-pd-mini">
         <i class="sidebar icon"></i>
       </a>
-      <a class="item -m-pd-mini" href="{% url 'problems:home' %}">
+      <a class="item m-pd-mini" href="{% url 'problems:home' %}">
         <img class="ui small image" id="logo-img" src={% static 'images/logo.png' %}>
       </a>
       <a class="active item" href="{% url 'problems:home' %}"><i class="home icon"></i>Home</a>
       <a class="item" href="{% url 'problems:archives' %}"><i class="save icon"></i>Archives</a>
       {% if user.is_staff %}
-        <a class="item" href="{% url 'problems:post_problem' %}"><i class="cloud upload icon"></i>Post a Problem</a>
+        <a class="item" href="{% url 'problems:post_problem' %}"><i class="cloud upload icon"></i>Post Problem</a>
       {% endif %}
       {% if user.is_authenticated %}
         <a class="item" href="{% url 'profiles:profile' %}"><i class="user icon"></i>Profile</a>
@@ -82,7 +82,7 @@
     <div class="row">
       <div class="eight wide floated column">
         <h3 class="ui header">Spur your interest</h3>
-        <p>Curiosity is essential for innovation and creativity. That's why we select the most iconic and fun problems to maximize the effectiveness of learning while keeping you engaged.
+        <p>Curiosity is essential for innovation and creativity. That’s why we select fun problems to maximize the effectiveness of learning while keeping you engaged.
         </p>
       </div>
       <div class="six wide right floated column">
@@ -101,8 +101,8 @@
     </div>
     <div class="row">
       <div class="eight wide column">
-        <h3 class="ui header">Open for discussion</h3>
-        <p>Share your perspective with other people. Everyone is welcome to ask questions and help one another find and correct mistakes.
+        <h3 class="ui header">Share your ideas</h3>
+        <p>Discussion helps broaden understanding and introduce new ways of thinking. You are welcomed to exchange your ideas with others here.
         </p>
       </div>
       <div class="six wide right floated column">
@@ -112,7 +112,7 @@
     <div class="row">
       <div class="eight wide column">
         <h3 class="ui header">Enrich your knowledge</h3>
-        <p>Here, you'll explore the unfamiliar and little-known aspect of mathematics, rediscover theorems and techniques like a mathematician. You'll also connect theories with today's science and technology.
+        <p>You’ll explore the unfamiliar and little-known aspect of mathematics, rediscover theorems and techniques like a mathematician. 
         </p>
       </div>
       <div class="six wide right floated column">

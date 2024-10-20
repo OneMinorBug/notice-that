@@ -48,7 +48,7 @@
   padding-left: 10em !important;
   padding-right: 10em !important;
 }
-.-m-pd-mini {
+.m-pd-mini {
   padding-bottom: 0.4em !important;
 }
 .m-end {
@@ -210,5 +210,19 @@ strong {
   .masthead h2 {
     margin-top: 0.5em;
     font-size: 1.5em;
+  }
+  #nav-bar{
+    background-image: url("../images/logo.png");
+    background-position: center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+  }
+  .m-padded-lr-big {
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
+  }
+  #problem-img-segment{
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
   }
 }
