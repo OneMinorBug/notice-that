@@ -24,6 +24,9 @@ def archives(request):
 def about(request):
     return render(request, 'about.html', {})
 
+def contact(request):
+    return render(request, 'contact.html', {})
+
 def problem_detail(request, pk):
     problem = get_object_or_404(Problem, pk=pk)
     if not request.user.is_staff and problem.scheduled_post_at and problem.scheduled_post_at > timezone.now():
