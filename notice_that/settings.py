@@ -176,8 +176,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-relay.brevo.com'  # Replace with your email provider's SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '7e497c001@smtp-brevo.com'
-EMAIL_HOST_PASSWORD = 'xsmtpsib-a57cddbc6a6c1d9d4b3bb943b50c5ae45cef3deba58924e33a3d2deab3c9acd6-UcCLVWjx5N3y67Iz'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'verify@notice-that.com'
 
 MATHJAX_LOCAL_PATH = 'static/mathjax/'
