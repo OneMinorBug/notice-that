@@ -26,7 +26,7 @@ def send_verification_code(request):
 
             # Send the code via email
             subject = f'NoticeThat Email Verification Code - {verification_code}'
-            message = f'Your email verification code is: \n\n {verification_code} \n\n If you received this email by mistake, just ignore it.'
+            message = f'Hey there, \n\n Thank you for signing up for notice-that.com. Your email verification code is: \n\n <b>{verification_code}</b> \n\n If you received this email by mistake, you can ignore it.'
             from_email = settings.DEFAULT_FROM_EMAIL
             recipient_list = [email]
 
