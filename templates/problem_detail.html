@@ -40,7 +40,7 @@
   <div class="ui container">
     <div class="ui top attached segment" style="line-height: 0">
       <h2>{{ problem.title }}</h2>
-      <div class="item">{{ problem.created_at|date:"F j, Y" }}</div>
+      <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
     </div>
     <div class="ui attached segment m-padded-lr-large" id="problem-img-segment">
       {% if problem.image %}

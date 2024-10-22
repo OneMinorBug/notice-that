@@ -35,8 +35,14 @@ if ENVIRONMENT == 'development':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'notice-that.com', 'www.notice-that.com', env('RENDER_EXTERNAL_HOSTNAME', default='')]
 
+CSRF_TRUSTED_ORIGINS = ['https://*.notice-that.com', 'https://notice-that.com', 'https://*.onrender.com']
+
+INTERNAL_IPS = {
+    '127.0.0.1',
+    'localhost:8000',
+}
 
 # Application definition
 
