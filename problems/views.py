@@ -14,11 +14,11 @@ from .forms import ProblemForm, CommentForm
 # Create your views here.
 
 def home(request):
-    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
+    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
     return render(request, 'home.html', {'problems': problems})
 
 def archives(request):
-    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
+    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
     return render(request, 'archives.html', {'problems': problems})
 
 def about(request):
@@ -95,6 +95,10 @@ def post_problem(request):
                 problem.scheduled_post_at = form.cleaned_data['scheduled_post_at']
             else:
                 problem.scheduled_post_at = timezone.now()
+            if form.cleaned_data.get('solution_post_at'):
+                problem.solution_post_at = form.cleaned_data['solution_post_at']
+            else:
+                problem.solution_post_at = problem.scheduled_post_at
             problem.save()
             # Save the pinned comment if provided
             solution_content = form.cleaned_data.get('solution')
@@ -104,7 +108,7 @@ def post_problem(request):
                     account=request.user,
                     content=solution_content,
                     pinned=True,
-                    created_at=problem.created_at
+                    created_at=problem.solution_post_at
                 )
             messages.success(request, 'Added one new problem')
             return redirect('problems:home')
