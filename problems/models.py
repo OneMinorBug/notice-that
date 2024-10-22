@@ -26,6 +26,10 @@ class Problem(models.Model):
         if not self.id:
             self.id = generate_id()
         super().save(*args, **kwargs)
+        
+    def get_absolute_url(self):
+        return reverse("problems:problem_detail", kwargs={"pk": self.id})
+    
 
 class Comment(models.Model):
     problem = models.ForeignKey(Problem, related_name='comments', on_delete=models.CASCADE)
