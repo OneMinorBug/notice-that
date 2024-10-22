@@ -2,53 +2,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>NoticeThat - {% block title %}{% endblock %}</title>
-    <meta name="author" content="Zhibo Sheng">
-    <meta name="description" content="Discover the beauty of math on our site with fun and interesting math problems.">
-    <meta name="keywords" content="math, problem solving, algebra, geometry">
-    <meta property="og:url" content="http://{{ request.META.HTTP_HOST }}{{ request.path }}">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="{% block og-image %}http://{{ request.META.HTTP_HOST }}{% static 'NoticeThat.jpg' %}{% endlbock %}">
-    <meta property="og:title" content="{% block og-title %}NoticeThat{% endblock %}">
-    <meta property="og:description" content="{% block og-description %}Discover the beauty of math on our site with fun and interesting math problems.{% endblock %}">
-    <meta property="twitter:image" content="{% block tw-image %}http://{{ request.META.HTTP_HOST }}{% static 'NoticeThat_tw.jpg' %}{% endlbock %}">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MBMH8BXRL8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-MBMH8BXRL8');
+  </script>
+  <title>NoticeThat - {% block title %}{% endblock %}</title>
+  <meta name="author" content="Zhibo Sheng">
+  <meta name="description" content="Discover the beauty of math on our site with fun and interesting math problems.">
+  <meta name="keywords" content="math, problem solving, algebra, geometry">
+  <meta property="og:url" content="http://{{ request.META.HTTP_HOST }}{{ request.path }}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{% block og-image %}http://{{ request.META.HTTP_HOST }}{% static 'NoticeThat.jpg' %}{% endlbock %}">
+  <meta property="og:title" content="{% block og-title %}NoticeThat{% endblock %}">
+  <meta property="og:description" content="{% block og-description %}Discover the beauty of math on our site with fun and interesting math problems.{% endblock %}">
+  <meta property="twitter:image" content="{% block tw-image %}http://{{ request.META.HTTP_HOST }}{% static 'NoticeThat_tw.jpg' %}{% endlbock %}">
     
-    {% block head %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src={% static "js/jquery.min.js" %}></script>
-    <script src={% static "js/sidebar.js" %}></script>
-    <script src={% static "js/transition.js" %}></script>
-    <script src={% static "js/visibility.js" %}></script>
-    <link rel="icon" href="{% static "images/favicon.ico" %}">
-    <link rel="stylesheet" type="text/css" href={% static "css/semantic.min.css" %}>
-    <link rel="stylesheet" href={% static "css/my-custom-ui.css" %} >
-    <script>
-        $(document)
-          .ready(function() {
-      
-            // fix menu when passed
-            $('.masthead')
-              .visibility({
-                once: false,
-                onBottomPassed: function() {
-                  $('.fixed.menu').transition('fade in');
-                },
-                onBottomPassedReverse: function() {
-                  $('.fixed.menu').transition('fade out');
-                }
-              })
-            ;
-      
-            // create sidebar and attach to menu open
-            $('.ui.sidebar')
-              .sidebar('attach events', '.toc.item')
-            ;
-      
-          })
-        ;
-    </script>
-    {% endblock%}
+  {% block head %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src={% static "js/jquery.min.js" %}></script>
+  <script src={% static "js/sidebar.js" %}></script>
+  <script src={% static "js/transition.js" %}></script>
+  <script src={% static "js/visibility.js" %}></script>
+  <link rel="icon" href="{% static "images/favicon.ico" %}">
+  <link rel="stylesheet" type="text/css" href={% static "css/semantic.min.css" %}>
+  <link rel="stylesheet" href={% static "css/my-custom-ui.css" %} >
+  <script>
+      $(document)
+        .ready(function() {
+    
+          // fix menu when passed
+          $('.masthead')
+            .visibility({
+              once: false,
+              onBottomPassed: function() {
+                $('.fixed.menu').transition('fade in');
+              },
+              onBottomPassedReverse: function() {
+                $('.fixed.menu').transition('fade out');
+              }
+            })
+          ;
+    
+          // create sidebar and attach to menu open
+          $('.ui.sidebar')
+            .sidebar('attach events', '.toc.item')
+          ;
+    
+        })
+      ;
+  </script>
+  {% endblock%}
 
 </head>
 <body class="pushable">
