@@ -46,7 +46,7 @@
     <div class="ui three column grid">
       {% for problem in problems reversed %}
       <div class="column">
-        <a class="ui fluid card m-equal-height-card" href="{% url 'problems:problem_detail' problem.pk %}">
+        <a class="ui fluid card m-equal-height-card" href="{% url 'problems:problem_detail' problem.id %}">
           <div class="m-content-wrapper">
             <div class="m-image-wrapper">
               <div class="image m-flex-image">

@@ -72,6 +72,8 @@
     <h2 class="item m-primary" style="color: #17d46b">NoticeThat</h2>
     <a class="m-padded-tb-small item" href="{% url 'problems:home' %}">Home</a>
     <a class="m-padded-tb-small item" href="{% url 'problems:archives' %}">Archives</a>
+    <a class="m-padded-tb-small item" href="{% url 'problems:about' %}">About Us</a>
+    <a class="m-padded-tb-small item" href="{% url 'problems:contact' %}">Contact Us</a>
     {% if user.is_staff %}
       <a class="m-padded-tb-small item" href="{% url 'problems:post_problem' %}">Post Problem</a>
     {% endif %}

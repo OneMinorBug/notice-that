@@ -1,8 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.utils import timezone
+import uuid
 
 # Create your models here.
+
+def generate_id():
+    return uuid.uuid4().hex[:8]
 
 class Problem(models.Model):
     title = models.CharField(max_length=100)
@@ -12,9 +17,15 @@ class Problem(models.Model):
     solution = models.TextField(max_length=5000, null=True, blank=True)
     solution_post_at = models.DateTimeField(null=True, blank=True)
     scheduled_post_at = models.DateTimeField(null=True, blank=True)
+    id = models.CharField(max_length=8, unique=True, editable=False, default=generate_id, primary_key=True)
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = generate_id()
+        super().save(*args, **kwargs)
 
 class Comment(models.Model):
     problem = models.ForeignKey(Problem, related_name='comments', on_delete=models.CASCADE)

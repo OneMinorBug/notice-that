@@ -28,7 +28,7 @@ def contact(request):
     return render(request, 'contact.html', {})
 
 def problem_detail(request, pk):
-    problem = get_object_or_404(Problem, pk=pk)
+    problem = get_object_or_404(Problem, id=pk)
     if not request.user.is_staff and problem.scheduled_post_at and problem.scheduled_post_at > timezone.now():
         messages.error(request, "This problem is not available.")
         return redirect('problems:home')
@@ -51,14 +51,14 @@ def problem_detail(request, pk):
                 reply.problem = problem
                 reply.parent = get_object_or_404(Comment, id=request.POST['comment_id'])  # Get parent comment
                 reply.save()
-                return redirect('problems:problem_detail', pk=problem.pk)
+                return redirect('problems:problem_detail', pk=problem.id)
         elif 'pin_comment' in request.POST and request.user.is_staff:  # Pinning functionality for staff users
             comment_to_pin = get_object_or_404(Comment, id=request.POST['pin_comment'])
             # Unpin any previously pinned comment
             Comment.objects.filter(problem=problem, pinned=True).update(pinned=False)
             comment_to_pin.pinned = True
             comment_to_pin.save()
-            return redirect('problems:problem_detail', pk=problem.pk)
+            return redirect('problems:problem_detail', pk=problem.id)
         else:
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
@@ -68,7 +68,7 @@ def problem_detail(request, pk):
                 comment.parent = None
                 comment.save()
                 print("Comment saved:", comment.content)
-                return redirect('problems:problem_detail', pk=problem.pk)
+                return redirect('problems:problem_detail', pk=problem.id)
             else:
                 print("Comment form errors:", comment_form.errors)  # Log any form errors
     else:
@@ -102,7 +102,7 @@ def post_problem(request):
             problem.save()
             # Save the pinned comment if provided
             solution_content = form.cleaned_data.get('solution')
-            if solution_content:
+            if solution_content != "<p><br></p>":
                 Comment.objects.create(
                     problem=problem,
                     account=request.user,

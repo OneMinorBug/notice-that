@@ -56,7 +56,7 @@
 		</form>
 		<div class="ui fluid vertical menu">
 			{% for problem in problems reversed %}
-			<a class="item" target="_blank" href="{% url 'problems:problem_detail' problem.pk %}">
+			<a class="item" target="_blank" href="{% url 'problems:problem_detail' problem.id %}">
 				<span>
 					<i class="small m-primary circle m-padded-lr-small icon"></i>{{ problem.title }}
 				</span>
