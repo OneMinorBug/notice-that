@@ -65,7 +65,7 @@
             {{ form.title }}
           </div>
           <div class="field">
-            <label for="{{ form.scheduled_post_at.id_for_label }}">Scheduled Post Time(optional)</label>
+            <label for="{{ form.scheduled_post_at.id_for_label }}">Scheduled Post Time (optional)</label>
             {{ form.scheduled_post_at }}  <!-- DateTime field -->
           </div>
           <div class="field">
@@ -81,7 +81,7 @@
           </div>
           <textarea id="editor-content" name="content" style="display:none;"></textarea>
           <div class="field">
-            <label for="{{ form.solution.id_for_label }}">Solution(optional)</label>
+            <label for="{{ form.solution.id_for_label }}">Solution (optional)</label>
             <div id="solution-wrapper">
                 <div id="solution-toolbar-container"><!-- toolbar for solution --></div>
                 <div id="solution-editor-container"><!-- editor for solution --></div>
@@ -89,7 +89,7 @@
           </div>
           <textarea id="solution-content" name="solution" style="display:none;"></textarea>
           <div class="field">
-            <label for="{{ form.solution_post_at.id_for_label }}">Solution Post Time</label>
+            <label for="{{ form.solution_post_at.id_for_label }}">Solution Post Time (optional)</label>
             {{ form.solution_post_at }}
           </div>
           <div class="ui right aligned container">

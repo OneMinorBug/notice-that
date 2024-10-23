@@ -23,8 +23,6 @@ class Problem(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
-        if not self.id:
-            self.id = generate_id()
         super().save(*args, **kwargs)
         
     def get_absolute_url(self):

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 <meta name="title" content="{{ problem.title|safe }} | NoticeThat">
-{% block og-image %}{{ problem.image.url }}{% endblock %}
 {% block og-title %}{{ problem.title|safe }}{% endblock %}
-{% block tw-image %}{{ problem.image.url }}{% endblock %}
+{% if problem.image %}
+  {% block og-image %}{{ problem.image }}{% endblock %}
+  {% block tw-image %}{{ problem.image }}{% endblock %}
+{% endif %}
 
 {% block head %}
   {{ block.super }}
