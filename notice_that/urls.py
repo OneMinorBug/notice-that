@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
+from problems.views import view_log_file
 
 #Sitemaps
 from django.contrib.sitemaps.views import sitemap
@@ -36,4 +37,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('', include('problems.urls')),
     path('profiles/', include('profiles.urls')),
+    path('logs/<filename>/', view_log_file, name="view_log_file")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

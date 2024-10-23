@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from environ import Env
+from .logging import LOGGING
 import dj_database_url
 
 env = Env()
@@ -186,6 +187,10 @@ EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'verify@notice-that.com'
+
+ADMINS = [
+    ('Zhibo', 'zhibosheng12@gmail.com'),
+]
 
 MATHJAX_LOCAL_PATH = 'static/mathjax/'
 MATHJAX_CONFIG_FILE = "TeX-AMS-MML_HTMLorMML"

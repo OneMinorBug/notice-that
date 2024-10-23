@@ -84,7 +84,7 @@
         </div>
       {% endif %}
       
-      {% if user_has_commented %}
+      {% if user_has_commented or request.user.is_superuser %}
       <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
       <!-- Display the pinned comment if it exists -->
         <div class="ui comments">
