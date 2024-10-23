@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Q
 from django.utils import timezone
@@ -137,3 +138,13 @@ def upload_image(request):
         # Return the image URL to be used in WangEditor
         return JsonResponse({'errno': 0, 'data': {'url': image_url}})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@staff_member_required
+def view_log_file(request, filename):
+    file_path = settings.BASE_DIR / filename
+    if file_path.exists():
+        with open(file_path, 'r') as file:
+            response = HttpResponse(file.read(), content_type='text/plain')
+            return response
+    else:
+        raise Http404("Log file does not exist")
