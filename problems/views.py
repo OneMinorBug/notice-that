@@ -15,11 +15,17 @@ from .forms import ProblemForm, CommentForm
 # Create your views here.
 
 def home(request):
-    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    if not request.user.is_staff:
+        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    else:
+        problems = Problem.objects.all().order_by('scheduled_post_at')
     return render(request, 'home.html', {'problems': problems})
 
 def archives(request):
-    problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    if not request.user.is_staff:
+        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    else:
+        problems = Problem.objects.all().order_by('scheduled_post_at')
     return render(request, 'archives.html', {'problems': problems})
 
 def about(request):
@@ -32,7 +38,8 @@ def problem_detail(request, pk):
     problem = get_object_or_404(Problem, id=pk)
     if not request.user.is_staff and problem.scheduled_post_at and problem.scheduled_post_at > timezone.now():
         messages.error(request, "This problem is not available.")
-        return redirect('problems:home')
+        previous_page = request.META.get('HTTP_REFERER', '/')
+        return redirect(previous_page)
     show_solution = problem.solution_post_at and problem.solution_post_at <= timezone.now()
     pinned_comment = problem.comments.filter(pinned=True, created_at__lte=timezone.now()).first()
     comments = problem.comments.filter(parent=None).exclude(id=pinned_comment.id if pinned_comment else None)   # Exclude pinned comment only if it exists
@@ -82,7 +89,8 @@ def problem_detail(request, pk):
         'reply_form': reply_form,
         'user_has_commented': user_has_commented,
         'total_comments': total_comments,
-        'show_solution': show_solution
+        'show_solution': show_solution,
+        'now': timezone.now(),
     })
 
 @login_required

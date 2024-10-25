@@ -38,12 +38,12 @@
 {{ block.super }}
 <!-- Page Contents -->
 <div class="ui vertical grid m-padded-tb-medium">
-  {% if problem.scheduled_post_at and problem.scheduled_post_at > now %}
-    <div class="ui yellow message">
-        This problem is scheduled to be posted on {{ problem.scheduled_post_at }}.
-    </div>
-  {% endif %}
   <div class="ui container">
+    {% if problem.scheduled_post_at and problem.scheduled_post_at > now %}
+      <div class="ui yellow message">
+          This problem is scheduled to be posted on {{ problem.scheduled_post_at }}.
+      </div>
+    {% endif %}
     <div class="ui top attached segment" style="line-height: 0">
       <h2>{{ problem.title }}</h2>
       <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>

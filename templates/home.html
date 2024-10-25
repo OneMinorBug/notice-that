@@ -42,7 +42,30 @@
 <div class="ui grid m-white m-padded-tb-big">
   <div class="ui container">
     <h1>Problems</h1>
-    <div class="ui three column grid">
+    <div class="ui three column computer only grid">
+      {% for problem in problems reversed %}
+      <div class="column">
+        <a class="ui fluid card m-equal-height-card" href="{% url 'problems:problem_detail' problem.id %}">
+          <div class="m-content-wrapper">
+            <div class="m-image-wrapper">
+              <div class="image m-flex-image">
+                {% if problem.image %}
+                  <img src="{{ problem.image.url }}" class="ui rounded fluid image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
+                {% else %}
+                  <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
+                {% endif %}
+              </div>
+            </div>
+            <div class="content m-padded">
+              <div class="ui header">{{ problem.title }}</div>
+              <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="ui one column mobile only grid">
       {% for problem in problems reversed %}
       <div class="column">
         <a class="ui fluid card m-equal-height-card" href="{% url 'problems:problem_detail' problem.id %}">
