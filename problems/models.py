@@ -37,5 +37,10 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
     pinned = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if self.pinned:
+            Comment.objects.filter(problem=self.problem, pinned=True).exclude(id=self.id).update(pinned=False)
+        super(Comment, self).save(*args, **kwargs)
+
     def __str__(self):
         return f'Comment by {self.account.username} on {self.problem.title}'
