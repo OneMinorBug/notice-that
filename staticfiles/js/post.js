@@ -6,7 +6,6 @@ const editorConfig = {
     placeholder: 'Type your response here...',
     onChange(editor) {
         const html = editor.getHtml()
-        console.log('editor content', html)
         // Update the hidden textarea with the editor's content
         document.getElementById('editor-content').value = html;
     },
@@ -74,15 +73,19 @@ const solutionEditorConfig = {
     }
 }
 
-const solutionEditor = createEditor({
-    selector: '#solution-editor-container',
-    html: '<p><br></p>',
-    config: solutionEditorConfig,
-    mode: 'simple',
-})
+const solutionEditorContainer = document.querySelector('#solution-editor-container');
 
-createToolbar({
-    editor: solutionEditor,
-    selector: '#solution-toolbar-container',
-    mode: 'simple',
-})
+if (solutionEditorContainer) {
+    const solutionEditor = createEditor({
+        selector: '#solution-editor-container',
+        html: '<p><br></p>',
+        config: solutionEditorConfig,
+        mode: 'simple',
+    });
+
+    createToolbar({
+        editor: solutionEditor,
+        selector: '#solution-toolbar-container',
+        mode: 'simple',
+    })
+}
