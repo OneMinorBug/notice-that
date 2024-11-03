@@ -86,9 +86,8 @@
       {% if user_has_commented or request.user.is_superuser %}
       <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
       <!-- Display the pinned comment if it exists -->
-        <div class="ui comments">
+      <div class="ui comments m-w">
         {% if pinned_comment and show_solution %}
-        <div class="ui comments">
           <div class="comment">
             <a class="avatar">
               <img src="{{ pinned_comment.account.profile.profile_picture.url }}" 
@@ -104,6 +103,17 @@
                 <a class="reply" id="reply-button-{{ pinned_comment.id }}" data-comment-id="{{ pinned_comment.id }}">Reply</a>
               </div>
               
+              <!-- Unpin Button -->
+              {% if request.user.is_staff %}
+              <div class="actions">
+                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('unpin-form-{{ pinned_comment.id }}').submit();">Unpin</a>
+              </div>
+              <form id="unpin-form-{{ pinned_comment.id }}" method="post" style="display: none;">
+                  {% csrf_token %}
+                  <input type="hidden" name="unpin_comment" value="{{ pinned_comment.id }}">
+              </form>
+              {% endif %}
+
               <!-- Reply Form -->
               <form class="ui reply form" method="post" style="display: none;" id="reply-form-{{ pinned_comment.id }}">
                 {% csrf_token %}
@@ -133,7 +143,6 @@
               {% endfor %}
             </div>
           </div>
-        </div>
         {% endif %}
         
         {% for comment in comments reversed %}
@@ -152,9 +161,9 @@
               </div>
 
               <!-- Pin Button -->
-              {% if not pinned_comment and request.user.is_staff %}
+              {% if request.user.is_staff %}
               <div class="actions">
-                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin Comment</a>
+                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin</a>
               </div>
               <form id="pin-form-{{ comment.id }}" method="post" style="display: none;">
                   {% csrf_token %}

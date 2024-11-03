@@ -54,6 +54,9 @@
 .m-end {
   align-self: end;
 }
+.m-w.comments {
+  max-width: none;
+}
 .masthead.segment {
   min-height: 700px;
   padding: 1em 0em;
