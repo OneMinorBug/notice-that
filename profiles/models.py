@@ -8,7 +8,7 @@ from django_resized import ResizedImageField
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = ResizedImageField(size=[256,256], quality=85, upload_to='profile_pictures/', default='default_profile.png')
+    profile_picture = ResizedImageField(size=[256,256], upload_to='profile_pictures/', default='profile_pictures/default_profile.png')
 
     def __str__(self):
         return self.user.username
