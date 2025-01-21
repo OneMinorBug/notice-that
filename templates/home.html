@@ -42,7 +42,7 @@
 <div class="ui grid m-white m-padded-tb-big">
   <div class="ui container">
     <h1>Problems</h1>
-    <div class="ui three column computer only grid">
+    <div class="ui three column tablet only computer only grid">
       {% for problem in problems reversed %}
       <div class="column">
         <a class="ui fluid card m-equal-height-card" href="{% url 'problems:problem_detail' problem.id %}">

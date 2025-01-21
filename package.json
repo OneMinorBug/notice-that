@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@wangeditor/editor": "^5.1.23",
-    "fomantic-ui-css": "^2.9.3",
     "mathjax": "^3.2.2"
   }
 }
