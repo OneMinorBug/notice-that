@@ -1,8 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'layouts/1.html' %}
+
+{% block title %}Sign Up{% endblock %}
 
 {% block head %}
   {{ block.super }}
-  <meta name="title" content="Sign up | NoticeThat">
+  <meta name="title" content="Sign up | NoticeThat" />
   <style type="text/css">
     .grid .column {
       max-width: 600px;
@@ -10,13 +12,9 @@
   </style>
 {% endblock %}
 
-{% block title %}Sign Up{% endblock %}
-
 {% block content %}
-{{ block.super }}
-<!-- Page Contents -->
 <div class="ui container">
-  <div class="ui middle aligned centered grid m-padded-tb-big">
+  <div class="ui middle aligned centered grid m-padded-tb-medium">
     <div class="column">
       <div class="ui large form">
         <h2>Register</h2>

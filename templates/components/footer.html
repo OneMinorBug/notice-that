@@ -1,0 +1,31 @@
+<footer class="ui inverted vertical footer segment">
+	<div class="ui container">
+		<div class="ui stackable inverted center aligned divided equal height stackable grid">
+			<div class="three wide column">
+				<div class="ui inverted link list">
+					<a href="{% url 'problems:home' %}" class="item">Home</a>
+					<a href="{% url 'accounts:register' %}" class="item">Register</a>
+					<a href="{% url 'problems:archives' %}" class="item">Archives</a>
+				</div>
+			</div>
+			<div class="three wide column">
+				<h4 class="ui inverted header">About</h4>
+				<div class="ui inverted link list">
+					<a href="{% url 'problems:about' %}" class="item">About Us</a>
+					<a href="{% url 'problems:contact' %}" class="item">Contact Us</a>
+				</div>
+			</div>
+			<div class = "middle aligned four wide column">
+				<h4>Email: contact@notice-that.com</h4>
+			</div>
+			<div class="middle aligned five wide column">
+				<img class="ui centered small image" src={% static 'images/logo-white.png' %}>
+			</div>
+		</div>
+	</div>
+	<div class="ui one column stackable center aligned page grid">
+		<h4 class="column twelve wide">
+			Copyright &copy; {% now 'Y' %} NoticeThat
+		</h4>
+	</div>
+</footer>

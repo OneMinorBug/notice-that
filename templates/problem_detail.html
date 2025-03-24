@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'layouts/1.html' %}
 
 <meta name="title" content="{{ problem.title|safe }} | NoticeThat">
 {% block og-title %}{{ problem.title|safe }}{% endblock %}
@@ -34,8 +34,6 @@
 {% block title %}{{ problem.title }}{% endblock %}
 
 {% block content %}
-{{ block.super }}
-<!-- Page Contents -->
 <div class="ui vertical grid m-padded-tb-medium">
   <div class="ui container">
     {% if problem.scheduled_post_at and problem.scheduled_post_at > now %}
@@ -224,5 +222,7 @@
 <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
 <script type="text/javascript" id="MathJax-script" defer src="{% static 'mathjax/es5/tex-svg.js' %}"></script>
 <script src="{% static 'js/comment.js' %}"></script>
-<script src="{% static 'js/post.js' %}"></script>
+{% if user.is_authenticated %}
+  <script src="{% static 'js/post.js' %}"></script>
+{% endif %}
 {% endblock %}
