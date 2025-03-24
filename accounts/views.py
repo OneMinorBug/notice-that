@@ -11,7 +11,7 @@ from django.http import JsonResponse
 from .forms import RegistrationForm
 
 def generate_verification_code():
-    """Generates a random 6-character verification code."""
+    #Generates a random 6-character verification code.
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 def send_verification_code(request):

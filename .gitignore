@@ -1,4 +1,4 @@
-env/
+.venv/
 media/
 static/
 __pycache__/

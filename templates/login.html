@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'layouts/1.html' %}
 
 {% block head %}
   {{ block.super }}
@@ -13,10 +13,8 @@
 {% block title %}Log In{% endblock %}
 
 {% block content %}
-{{ block.super }}
-<!-- Page Contents -->
 <div class="ui container">
-  <div class="ui middle aligned centered grid m-padded-tb-big">
+  <div class="ui middle aligned centered grid m-padded-tb-medium">
     <div class="column">
       <div class="ui large form">
         <h2>Login</h2>
@@ -24,17 +22,17 @@
           {% csrf_token %}
           <div class="field">
             <label for="id_username">Username</label>
-            <input type="text" name="username" id="id_username" required>
+            <input type="text" name="username" id="id_username" required />
           </div>
           <div class="field">
             <label for="id_password">Password</label>
-            <input type="password" name="password" id="id_password" required>
+            <input type="password" name="password" id="id_password" required />
           </div>
           <button type="submit" class="ui m-primary button">Login</button>
         </form>
         <div class="ui container">
           <br>
-        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+          <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
         </div>
         {% if messages %}
           <div class="ui message">
@@ -49,5 +47,4 @@
     </div>
   </div>
 </div>
-  
 {% endblock %}

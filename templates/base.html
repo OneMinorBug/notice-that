@@ -62,111 +62,18 @@
 </head>
 <body class="pushable">
 
-  <!-- Following Menu -->
-  <div class="ui large top fixed hidden menu">
-    <div class="ui container">
-      <a class="item" href="{% url 'problems:home' %}"><i class="home icon"></i>Home</a>
-      <a class="item" href="{% url 'problems:archives' %}"><i class="save icon"></i>Archives</a>
-      {% if user.is_staff %}
-      <a class="item" href="{% url 'problems:post_problem' %}"><i class="cloud upload icon"></i>Post Problem</a>
-      {% endif %}
-      {% if user.is_authenticated %}
-      <a class="item" href="{% url 'profiles:profile' %}"><i class="user icon"></i>Profile</a>
-      {% endif %}
-      <div class="right menu">
-      {% if user.is_authenticated %}
-        <a class="item" href="{% url 'accounts:logout' %}">Logout</a>
-      {% else %}
-        <a class="item" href="{% url 'accounts:login' %}">Login/Sign Up</a>
-      {% endif %}
-      </div>
-    </div>
-    </div>
+  {% include 'components/sidebar.html' %}    
 
-  <!-- Sidebar Menu -->
-  <div class="ui vertical inverted sidebar menu">
-    <h2 class="item m-primary" style="color: #17d46b">NoticeThat</h2>
-    <a class="m-padded-tb-small item" href="{% url 'problems:home' %}">Home</a>
-    <a class="m-padded-tb-small item" href="{% url 'problems:archives' %}">Archives</a>
-    <a class="m-padded-tb-small item" href="{% url 'problems:about' %}">About Us</a>
-    <a class="m-padded-tb-small item" href="{% url 'problems:contact' %}">Contact Us</a>
-    {% if user.is_staff %}
-      <a class="m-padded-tb-small item" href="{% url 'problems:post_problem' %}">Post Problem</a>
-    {% endif %}
-    {% if user.is_authenticated %}
-      <a class="m-padded-tb-small item" href="{% url 'profiles:profile' %}">Profile</a>
-    {% endif %}
-    {% if user.is_authenticated %}
-      <a class="m-padded-tb-small item" href="{% url 'accounts:logout' %}">Logout</a>
-    {% else %}
-      <a class="m-padded-tb-small item" href="{% url 'accounts:login' %}">Login/Sign Up</a>
-    {% endif %}
-  </div>
-    
   <div class="pusher">
-    {% block content %}
-    <!-- Nav Bar -->
-    <div class="ui inverted vertical center aligned segment m-padded-tb-mini" id="nav-bar">
-      <div class="ui header container">
-        <div class="ui large secondary inverted pointing menu">
-          <a class="toc item m-pd-mini">
-            <i class="sidebar icon"></i>
-          </a>
-          <a class="item m-pd-mini" href="{% url 'problems:home' %}">
-            <img class="ui small image" id="logo-img" src={% static 'images/logo.png' %}>
-          </a>
-          <a class="item" href="{% url 'problems:home' %}"><i class="home icon"></i>Home</a>
-          <a class="item" href="{% url 'problems:archives' %}"><i class="save icon"></i>Archives</a>
-          {% if user.is_staff %}
-            <a class="item" href="{% url 'problems:post_problem' %}"><i class="cloud upload icon"></i>Post Problem</a>
-          {% endif %}
-          {% if user.is_authenticated %}
-            <a class="item" href="{% url 'profiles:profile' %}"><i class="user icon"></i>Profile</a>
-          {% endif %}
-          <div class="right item">
-            {% if user.is_authenticated %}
-              <a class="item" href="{% url 'accounts:logout' %}">Logout</a>
-            {% else %}
-              <a class="item" href="{% url 'accounts:login' %}">Login/Sign Up</a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Page Contents -->
+
+    {% block header %}
     {% endblock %}
-    <!-- Footer -->
-    <div class="ui inverted vertical footer segment">
-      <div class="ui container">
-        <div class="ui stackable inverted center aligned divided equal height stackable grid">
-          <div class="three wide column">
-            <h4 class="ui inverted header">Links</h4>
-            <div class="ui inverted link list">
-              <a href="{% url 'problems:home' %}" class="item">Home</a>
-              <a href="{% url 'accounts:register' %}" class="item">Register</a>
-            </div>
-          </div>
-          <div class="three wide column">
-            <h4 class="ui inverted header">About</h4>
-            <div class="ui inverted link list">
-              <a href="{% url 'problems:about' %}" class="item">About Us</a>
-              <a href="{% url 'problems:contact' %}" class="item">Contact Us</a>
-            </div>
-          </div>
-          <div class = "middle aligned four wide column">
-            <h4>Email: contact@notice-that.com</h4>
-          </div>
-          <div class="middle aligned five wide column">
-            <img class="ui centered small image" src={% static 'images/logo-white.png' %}>
-          </div>
-        </div>
-      </div>
-      <div class="ui one column stackable center aligned page grid">
-        <h4 class="column twelve wide">
-          Copyright &copy; {% now 'Y' %} NoticeThat
-        </h4>
-      </div>
-    </div>
+
+    {% block layout %}
+    {% endblock %}
+    
+    {% include 'components/footer.html' %}
+    
   </div>
 </body>
 </html>
