@@ -61,6 +61,9 @@
 .m-end {
   align-self: end;
 }
+.m-w {
+  max-width: none;
+}
 header .menu {
   border-radius: 0;
 }
@@ -197,6 +200,11 @@ strong {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.m-mobile-title {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 @media only screen and (max-width: 700px) {
   header .secondary.inverted.menu .item,

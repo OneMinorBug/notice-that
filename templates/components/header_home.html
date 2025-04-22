@@ -5,7 +5,7 @@
 				<i class="sidebar icon"></i>
 			</a>
 			<a class="item m-pd-mini" href="{% url 'problems:home' %}">
-				<img class="ui small image" id="logo" src={% static 'images/logo.png' %}>
+				<img class="ui small image" id="logo" src={% static 'images/logo.png' %} alt="NoticeThat">
 			</a>
 			<a class="{% if request.path == '/home/' %}active {% endif %}item" href="{% url 'problems:home' %}"><i class="home icon"></i>Home</a>
 			<a class="{% if request.path == '/about/' %}active {% endif %}item" href="{% url 'problems:about' %}"><i class="users icon"></i>About</a>
