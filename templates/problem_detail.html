@@ -1,7 +1,9 @@
 {% extends 'layouts/1.html' %}
 
 <meta name="title" content="{{ problem.title|safe }} | NoticeThat">
+{% block title %}{{ problem.title }} -{% endblock %}
 {% block og-title %}{{ problem.title|safe }}{% endblock %}
+{% block og-description %}{{ problem.content|safe }}{% endblock %}
 {% if problem.image %}
   {% block og-image %}{{ problem.image }}{% endblock %}
   {% block tw-image %}{{ problem.image }}{% endblock %}
@@ -30,8 +32,6 @@
     };
   </script>
 {% endblock %}
-
-{% block title %}{{ problem.title }}{% endblock %}
 
 {% block content %}
 <div class="ui vertical grid m-padded-tb-medium">

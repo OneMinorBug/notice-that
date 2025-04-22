@@ -11,16 +11,16 @@
 
     gtag('config', 'G-MBMH8BXRL8');
   </script>
-  <title>NoticeThat - {% block title %}{% endblock %}</title>
+  <title>{% block title %}{% endblock %}NoticeThat</title>
   <meta name="author" content="Zhibo Sheng">
   <meta name="description" content="Discover the beauty of math on our site with fun and interesting math problems.">
-  <meta name="keywords" content="math, problem solving, algebra, geometry">
+  <meta name="keywords" content="math, problem solving, algebra, geometry, learning, fun, interesting, math problems, math puzzles, math games, math challenges, math quizzes, math trivia, math facts, math history, math jokes, math riddles">
   <meta property="og:url" content="http://{{ request.META.HTTP_HOST }}{{ request.path }}">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="{% block og-image %}http://{{ request.META.HTTP_HOST }}{% static 'NoticeThat.jpg' %}{% endblock %}">
+  <meta property="og:image" content="{% block og-image %}http://{{ request.META.HTTP_HOST }}{% static 'images/NoticeThat.jpg' %}{% endblock %}">
   <meta property="og:title" content="{% block og-title %}NoticeThat{% endblock %}">
   <meta property="og:description" content="{% block og-description %}Discover the beauty of math on our site with fun and interesting math problems.{% endblock %}">
-  <meta property="twitter:image" content="{% block tw-image %}http://{{ request.META.HTTP_HOST }}{% static 'NoticeThat_tw.jpg' %}{% endblock %}">
+  <meta property="twitter:image" content="{% block tw-image %}http://{{ request.META.HTTP_HOST }}{% static 'images/NoticeThat_tw.jpg' %}{% endblock %}">
     
   {% block head %}
   <meta charset="UTF-8">
@@ -71,6 +71,7 @@
 
     {% block layout %}
     {% endblock %}
+    <br>
     
     {% include 'components/footer.html' %}
     
