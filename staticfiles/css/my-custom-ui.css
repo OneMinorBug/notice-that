@@ -15,13 +15,64 @@
   font-weight: 400;
   line-height: 1.8;
 }
-.m-medium-text p{
-  font-family: Roboto, sans-serif;
-  font-size: medium;
+.m-medium-text {
+  display: block;
 }
-.ui.comments .comment .content .m-medium-text{
+.m-medium-text p {
   font-family: Roboto, sans-serif;
   font-size: medium;
+  /* Ensure paragraphs don't accidentally get overflow */
+  overflow: visible;
+}
+.ui.comments .comment .content .m-medium-text {
+  font-family: Roboto, sans-serif;
+  font-size: medium;
+  /* Ensure comment text doesn't accidentally get overflow */
+  overflow: visible;
+}
+.m-medium-text::-webkit-scrollbar {
+  display: none;
+}
+.m-medium-text::-webkit-scrollbar-track {
+  display: none;
+}
+.m-medium-text::-webkit-scrollbar-thumb {
+  display: none;
+}
+.m-medium-text::-webkit-scrollbar-thumb:hover {
+  display: none;
+}
+
+/* === NEW STYLES for MathJax === */
+mjx-container[display="true"] {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 0 10px 0;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #aaa #eee; /* Firefox */
+}
+mjx-container[display="true"]::-webkit-scrollbar {
+  height: 8px;
+}
+mjx-container[display="true"]::-webkit-scrollbar-track {
+  background: #eee;
+  border-radius: 4px;
+  margin: 0 0 10px 0;
+}
+mjx-container[display="true"]::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
+  border: 2px solid #eee;
+}
+mjx-container[display="true"]::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
+.m-padded-tb-tiny {
+  padding-top: 0.5em !important;
+  padding-bottom: 0.5em !important;
 }
 .m-padded-tb-mini {
   padding-top: 0.7em !important;
@@ -94,19 +145,22 @@ nav #logo {
   font-size: 1.7em;
   font-weight: normal;
 }
-.ui.m-bprimary.label, .ui.red.labels .label {
+.ui.m-bprimary.label,
+.ui.red.labels .label {
   background-color: #17d46b !important;
   border-color: #17d46b !important;
   color: #fff !important;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
-.ui.sidebar #logo{
+.ui.sidebar #logo {
   height: 30px;
   width: auto;
 }
 .ui.sidebar {
   padding: 1rem;
 }
-.ui.sidebar .item{
+.ui.sidebar .item {
   line-height: 2;
   font-size: 1.2rem;
 }
@@ -153,7 +207,7 @@ header .ui.container .toc.item {
   padding: 1em;
   display: none;
 }
-header .ui.container .toc.item i.icon{
+header .ui.container .toc.item i.icon {
   margin: 0;
 }
 nav .secondary.menu .toc.item {
@@ -167,7 +221,7 @@ nav .secondary.menu .toc.item {
   color: #fff;
   background-color: #13b45c;
 }
-button i.m-primary.icon{
+button i.m-primary.icon {
   color: #fff;
   background-color: #17d46b !important;
 }
@@ -202,11 +256,33 @@ strong {
   text-overflow: ellipsis;
 }
 .m-mobile-title {
-  word-break: break-all;
-  overflow-wrap: break-word;
   white-space: normal;
 }
-@media only screen and (max-width: 700px) {
+.m-w {
+  max-width: none !important;
+}
+@media only screen and (max-width: 767.98px) {
+  /* Prevent overflow in ui containers */
+  .ui.ui.ui.container:not(.fluid) {
+    width: calc(100% - 2em);
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+  mjx-container[display="true"] {
+    padding: 0 0.5em 10px 0;
+  }
+  mjx-container[display="true"]::-webkit-scrollbar-track {
+    margin: 0 0.5em 10px 0;
+  }
+  #problem-img-segment {
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
+  }
+  .m-padded-lr-big {
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
+  }
+  /* Hide the secondary menu on mobile devices */
   header .secondary.inverted.menu .item,
   .secondary.inverted.menu .menu {
     display: none;
@@ -218,6 +294,7 @@ strong {
     padding-left: 1em !important;
     padding-right: 1em !important;
   }
+  /* Masthead on home page*/
   .masthead.segment {
     min-height: 350px;
   }
@@ -231,13 +308,5 @@ strong {
   }
   .ui.vertical.stripe {
     padding: 5em 0em;
-  }
-  .m-padded-lr-big {
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
-  }
-  #problem-img-segment{
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
   }
 }
