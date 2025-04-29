@@ -53,7 +53,7 @@
       {% endif %}
     </div>
     <div class="ui attached segment m-padded-tb-medium m-padded-lr-big">
-      <div class="m-medium-text">{{ problem.content|safe }}</div>
+      <div class="m-medium-text" id="problem-content-segment">{{ problem.content|safe }}</div>
     </div>
     <div class="ui bottom attached segment m-padded-tb-medium m-padded-lr-big">
       {% if user.is_authenticated %}
