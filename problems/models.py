@@ -11,10 +11,10 @@ def generate_id():
 
 class Problem(models.Model):
     title = models.CharField(max_length=100)
-    content = models.TextField(max_length=5000)
+    content = models.TextField(max_length=10000)
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='problem_images/', null=True, blank=True)
-    solution = models.TextField(max_length=5000, null=True, blank=True)
+    solution = models.TextField(max_length=100000, null=True, blank=True)
     solution_post_at = models.DateTimeField(null=True, blank=True)
     scheduled_post_at = models.DateTimeField(null=True, blank=True)
     id = models.CharField(max_length=8, unique=True, editable=False, default=generate_id, primary_key=True)
