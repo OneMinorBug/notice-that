@@ -3,10 +3,22 @@ from .models import Problem, Comment
 
 # Register your models here.
 class ProblemAdmin(admin.ModelAdmin):
-    list_display = ['title', 'content', 'created_at']
+    list_display = ['title', 'content', 'scheduled_post_at']
+    list_per_page = 20
+    search_fields = ['title', 'content']
+    ordering = ['-scheduled_post_at']
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['title', 'content', 'account', 'created_at']
+    list_display = ['account', 'problem', 'content', 'pinned', 'created_at']
+    list_per_page = 20
+    list_filter = ['pinned']
+    search_fields = ['account', 'problem', 'content']
+    readonly_fields = ['account', 'created_at']
+    ordering = ['-created_at']
+    view_on_site = True
 
-admin.site.register(Problem)
-admin.site.register(Comment)
+    def view_on_site(self, obj):
+        return obj.problem.get_absolute_url()
+
+admin.site.register(Problem, ProblemAdmin)
+admin.site.register(Comment, CommentAdmin)
