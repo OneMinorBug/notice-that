@@ -42,36 +42,35 @@
 .m-medium-text::-webkit-scrollbar-thumb:hover {
   display: none;
 }
-/* === NEW STYLES for MathJax === */
+/* === MathJax Styles === */
 mjx-container {
-  display: block;
-  overflow-x: auto; /* Changed from scroll to auto */
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
   max-width: 100%;
   box-sizing: border-box;
+}
+/* Inline math mode */
+mjx-container:not([display="true"]) {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+/* Display math mode */
+mjx-container[display="true"] {
+  display: block;
+  margin: 1em 0;
   padding: 0 0 10px 0;
-  /* Remove potentially conflicting scroll settings */
-  -webkit-overflow-scrolling: auto;
-  /* Add horizontal scrollbar always */
-  overflow-y: visible;
-  overflow: -moz-scroll-horizontal;
 }
 mjx-container::-webkit-scrollbar {
-  -webkit-appearance: none;
   height: 5px;
-  background: #f1f1f1;
+  background: transparent;
 }
-mjx-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-  margin: 0 0.5em 10px 0;
-}
-mjmjx-container::-webkit-scrollbar-thumb {
-  background-color: #aaa;
-  border-radius: 4px;
-  border: 2px solid #eee;
+mjx-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
 }
 mjx-container::-webkit-scrollbar-thumb:hover {
-  background-color: #888;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 .m-padded-tb-tiny {
   padding-top: 0.5em !important;
@@ -257,6 +256,7 @@ strong {
 }
 .m-mobile-title {
   white-space: normal;
+  overflow-wrap: anywhere;
 }
 .m-w {
   max-width: none !important;
