@@ -46,7 +46,7 @@ def problem_detail(request, pk):
         messages.error(request, "This problem is not available.")
         previous_page = request.META.get('HTTP_REFERER', '/')
         return redirect(previous_page)
-    show_solution = request.user.is_superuser or problem.solution_post_at <= timezone.now()
+    show_solution = request.user.is_staff or problem.solution_post_at <= timezone.now()
     pinned_comment = problem.comments.filter(pinned=True).first()
     comments = problem.comments.filter(parent=None).exclude(id=pinned_comment.id if pinned_comment else None)   # Exclude pinned comment only if it exists
     user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
