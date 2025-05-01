@@ -17,7 +17,7 @@
 			<div class="right item">
 				{% if user.is_authenticated %}
 					<a href="{% url 'profiles:profile' %}" class="profile-link">
-						<img class="ui avatar image" src="{{ user.profile.profile_picture.url }}" onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+						<img class="ui avatar image m-avatar" src="{{ user.profile.profile_picture.url }}" onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
 					</a>
 					&nbsp;&nbsp;&nbsp;
 					<a class="ui inverted button" href="{% url 'accounts:logout' %}">Logout</a>
