@@ -114,6 +114,9 @@ mjx-container::-webkit-scrollbar-thumb:hover {
 .m-end {
   align-self: end;
 }
+.m-avatar {
+  object-fit: cover;
+}
 header .menu {
   border-radius: 0;
 }
