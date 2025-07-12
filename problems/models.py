@@ -19,6 +19,9 @@ class Problem(models.Model):
     scheduled_post_at = models.DateTimeField(null=True, blank=True)
     id = models.CharField(max_length=8, unique=True, editable=False, default=generate_id, primary_key=True)
 
+    class Meta:
+        ordering = ['scheduled_post_at']
+
     def __str__(self):
         return self.title
     
