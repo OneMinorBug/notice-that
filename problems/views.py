@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.html import strip_tags
 from .models import Problem, Comment
 from .forms import ProblemForm, CommentForm
 
@@ -27,17 +28,17 @@ def home(request):
 
 @login_required
 def problems(request):
-    if not request.user.is_staff:
-        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    if request.user.is_staff:
+        problems = Problem.objects.all()
     else:
-        problems = Problem.objects.all().order_by('scheduled_post_at')
+        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
     return render(request, 'problems.html', {'problems': problems})
 
 def archives(request):
-    if not request.user.is_staff:
-        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    if request.user.is_staff:
+        problems = Problem.objects.all()
     else:
-        problems = Problem.objects.all().order_by('scheduled_post_at')
+        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
     return render(request, 'archives.html', {'problems': problems})
 
 def about(request):
@@ -170,7 +171,7 @@ def post_problem(request):
             problem.save()
             # Save the pinned comment if provided
             solution_content = form.cleaned_data.get('solution')
-            if solution_content != "<p><br></p>":
+            if not is_empty_content(solution_content):
                 Comment.objects.create(
                     problem=problem,
                     account=request.user,
@@ -215,3 +216,13 @@ def view_log_file(request, filename):
             return response
     else:
         raise Http404("Log file does not exist")
+
+def is_empty_content(content):
+    if not content:
+        return True
+    # Strip HTML tags
+    text_only = strip_tags(content)
+    # Replace &nbsp; with regular space and strip
+    cleaned = text_only.replace('&nbsp;', ' ').strip()
+    print(f"Checking content: '{cleaned}'")  # Debugging output
+    return not cleaned or cleaned.isspace()
