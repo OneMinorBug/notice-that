@@ -21,11 +21,17 @@ updating_comment = False
 updating_problem = False
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('problems:problems')
+    return render(request, 'home.html', {})
+
+@login_required
+def problems(request):
     if not request.user.is_staff:
         problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
     else:
         problems = Problem.objects.all().order_by('scheduled_post_at')
-    return render(request, 'home.html', {'problems': problems})
+    return render(request, 'problems.html', {'problems': problems})
 
 def archives(request):
     if not request.user.is_staff:
@@ -173,7 +179,7 @@ def post_problem(request):
                     created_at=problem.solution_post_at
                 )
             messages.success(request, 'Added one new problem')
-            return redirect('problems:home')
+            return redirect('problems:problems')
         else:
             print(form.errors)
             messages.error(request, "Parameter error, failed to post")
