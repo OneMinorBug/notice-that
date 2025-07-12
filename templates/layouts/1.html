@@ -1,16 +1,13 @@
 {% extends 'base.html' %}
 
-{% block header%}
-    {% if user.is_authenticated%}
-        {% include 'components/header_fixed_menu.html' %}
-    {% else %}
-        {% include 'components/header_home.html' %}
-    {% endif %}
-{% endblock %}
-
 {% block layout %}
+
+    {% include 'components/header_fixed_menu.html' %}
 
     {% block content %}
     {% endblock %}
+
+    <br>
+    {% include 'components/footer.html' %}
 
 {% endblock %}

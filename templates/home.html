@@ -6,72 +6,6 @@
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-  <div class="ui grid m-white m-padded-tb-medium">
-    <div class="ui container">
-      <h1>Problems</h1>
-      <div class="ui three column computer only grid">
-        {% for problem in problems reversed %}
-          <div class="column">
-            <a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
-              <div class="image">
-                {% if problem.image %}
-                  <img src="{{ problem.image.url }}" class="rounded image m-cover-image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
-                {% else %}
-                  <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image m-cover-image">
-                {% endif %}
-              </div>
-              <div class="content">
-                <div class="header m-truncate">{{ problem.title }}</div>
-                <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
-              </div>
-            </a>
-          </div>
-          {% endfor %}
-      </div>
-      <div class="ui two column tablet only grid">
-        {% for problem in problems reversed %}
-          <div class="column">
-            <a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
-              <div class="image">
-                {% if problem.image %}
-                  <img src="{{ problem.image.url }}" class="rounded image m-cover-image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
-                {% else %}
-                  <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image m-cover-image">
-                {% endif %}
-              </div>
-              <div class="content">
-                <div class="header m-truncate">{{ problem.title }}</div>
-                <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
-              </div>
-            </a>
-          </div>
-          {% endfor %}
-      </div>
-      <div class="ui one column mobile only grid">
-        {% for problem in problems reversed %}
-          <div class="column">
-            <a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
-              <div class="image">
-                {% if problem.image %}
-                  <img src="{{ problem.image.url }}" class="rounded image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
-                {% else %}
-                  <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
-                {% endif %}
-              </div>
-              <div class="content">
-                <div class="header m-mobile-title">{{ problem.title }}</div>
-                <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
-              </div>
-            </a>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>  
-
-{% else %}    
-  
 <div class="ui inverted vertical masthead center aligned segment">
   <div class="ui text container">
     <h1 class="ui inverted header">
@@ -87,7 +21,7 @@
     <div class="row">
       <div class="eight wide floated column">
         <h3 class="ui header">Spur your interest</h3>
-        <p>Curiosity is essential for innovation and creativity. That’s why we select fun problems to maximize the effectiveness of learning while keeping you engaged.
+        <p>Curiosity is essential for innovation and creativity. That's why we select fun problems to maximize the effectiveness of learning while keeping you engaged.
         </p>
       </div>
       <div class="six wide right floated column">
@@ -141,5 +75,4 @@
     </div>
   </div>
 </div>
-{% endif %}
 {% endblock %}
