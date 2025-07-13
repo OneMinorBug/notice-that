@@ -17,7 +17,7 @@ class Problem(models.Model):
     solution_post_at = models.DateTimeField(null=True, blank=True)
     scheduled_post_at = models.DateTimeField(null=True, blank=True)
     id = models.CharField(max_length=8, unique=True, editable=False, default=generate_id, primary_key=True)
-    solution_comment = models.OneToOneField('Comment', null=True, blank=True, on_delete=models.SET_NULL)
+    solution_comment = models.OneToOneField('Comment', null=True, blank=True, on_delete=models.SET_NULL, related_name='problem_as_solution')
 
     class Meta:
         ordering = ['scheduled_post_at']

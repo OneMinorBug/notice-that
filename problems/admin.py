@@ -8,6 +8,7 @@ class ProblemAdmin(admin.ModelAdmin):
     list_per_page = 20
     search_fields = ['title', 'content']
     ordering = ['-scheduled_post_at']
+    raw_id_fields = ('solution_comment',)
 
     @admin.display(boolean=True, description='Has Solution?')
     def has_solution(self, obj):
@@ -20,16 +21,17 @@ class ProblemAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ['account', 'problem', 'content', 'is_pinned', 'created_at']
     list_per_page = 20
-    list_filter = ['is_pinned']
-    date_hierarchy = 'created_at'
     search_fields = ['account__username', 'problem__title', 'problem__content', 'content']
     readonly_fields = ['account', 'parent', 'problem']
     ordering = ['-created_at']
     view_on_site = True
+    raw_id_fields = ('problem', 'parent')
 
     @admin.display(boolean=True, description='Pinned?')
     def is_pinned(self, obj):
-        return obj.problem.solution_comment == obj if obj.problem.solution_comment else False
+        if obj.problem.solution_comment:
+            return obj.problem.solution_comment_id == obj.id
+        return False
 
     def view_on_site(self, obj):
         return obj.problem.get_absolute_url()
