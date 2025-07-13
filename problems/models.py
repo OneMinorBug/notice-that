@@ -14,10 +14,10 @@ class Problem(models.Model):
     content = models.TextField(max_length=10000)
     created_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='problem_images/', null=True, blank=True)
-    solution = models.TextField(max_length=100000, null=True, blank=True)
     solution_post_at = models.DateTimeField(null=True, blank=True)
     scheduled_post_at = models.DateTimeField(null=True, blank=True)
     id = models.CharField(max_length=8, unique=True, editable=False, default=generate_id, primary_key=True)
+    solution_comment = models.OneToOneField('Comment', null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['scheduled_post_at']
@@ -38,12 +38,6 @@ class Comment(models.Model):
     content = models.TextField(max_length=100000)
     created_at = models.DateTimeField(default=timezone.now)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
-    pinned = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        if self.pinned:
-            Comment.objects.filter(problem=self.problem, pinned=True).exclude(id=self.id).update(pinned=False)
-        super(Comment, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'Comment by {self.account.username} on {self.problem.title}'
