@@ -8,17 +8,36 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.html import strip_tags
 from .models import Problem, Comment
 from .forms import ProblemForm, CommentForm
 
 # Create your views here.
 User = get_user_model()
-updating_comment = False
-updating_problem = False
+
+def is_empty_content(content):
+    if not content:
+        return True
+    # Strip HTML tags
+    text_only = strip_tags(content)
+    # Replace &nbsp; with regular space and strip
+    cleaned = text_only.replace('&nbsp;', ' ').strip()
+    return not cleaned or cleaned.isspace()
+
+# Finds all IDs in a comment tree, starting from a given comment. Recursion.
+def get_comment_tree_ids(start_comment):
+    if not start_comment:
+        return set()
+
+    id_set = {start_comment.id}
+    for reply in start_comment.replies.all():
+        id_set.update(get_comment_tree_ids(reply)) # Merges the sets
+    return id_set
 
 def home(request):
     if request.user.is_authenticated:
@@ -27,17 +46,17 @@ def home(request):
 
 @login_required
 def problems(request):
-    if not request.user.is_staff:
-        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    if request.user.is_staff:
+        problems = Problem.objects.all()
     else:
-        problems = Problem.objects.all().order_by('scheduled_post_at')
+        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
     return render(request, 'problems.html', {'problems': problems})
 
 def archives(request):
-    if not request.user.is_staff:
-        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now()).order_by('scheduled_post_at')
+    if request.user.is_staff:
+        problems = Problem.objects.all()
     else:
-        problems = Problem.objects.all().order_by('scheduled_post_at')
+        problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
     return render(request, 'archives.html', {'problems': problems})
 
 def about(request):
@@ -52,140 +71,104 @@ def problem_detail(request, pk):
         messages.error(request, "This problem is not available.")
         previous_page = request.META.get('HTTP_REFERER', '/')
         return redirect(previous_page)
-    show_solution = request.user.is_staff or problem.solution_post_at <= timezone.now()
-    pinned_comment = problem.comments.filter(pinned=True).first()
-    comments = problem.comments.filter(parent=None).exclude(id=pinned_comment.id if pinned_comment else None)   # Exclude pinned comment only if it exists
-    user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
-    reply_form = CommentForm()
-    comment_form = CommentForm()
-    total_comments = comments.count() + (1 if pinned_comment and show_solution else 0)
+    parent_id_with_error = None
 
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect('login')
-        if 'comment_id' in request.POST:  # Check if a reply is being submitted
-            reply_form = CommentForm(request.POST)
-            if reply_form.is_valid():
-                reply = reply_form.save(commit=False)
-                reply.account = request.user
-                reply.problem = problem
-                reply.parent = get_object_or_404(Comment, id=request.POST['comment_id'])  # Get parent comment
-                reply.save()
-                return redirect('problems:problem_detail', pk=problem.id)
             
-        elif 'pin_comment' in request.POST and request.user.is_staff:  # Pinning for staffs
-            comment_to_pin = get_object_or_404(Comment, id=request.POST['pin_comment'])
-            # Unpin any previously pinned comment
-            Comment.objects.filter(problem=problem, pinned=True).update(pinned=False)
-            comment_to_pin.pinned = True
-            comment_to_pin.save()
+        if 'pin_comment_id' in request.POST and request.user.is_staff:  # Pinning for staffs
+            comment_to_pin = get_object_or_404(Comment, id=request.POST['pin_comment_id'], problem=problem)
+            # This pins the comment and unpin the previously pinned comment if it exists
+            problem.solution_comment = comment_to_pin
+            problem.save()
+            messages.success(request, 'Solution has been pinned.')
             return redirect('problems:problem_detail', pk=problem.id)
         
-        elif 'unpin_comment' in request.POST and request.user.is_staff:  # Unpinning for staffs
-            Comment.objects.filter(problem=problem, pinned=True).update(pinned=False)
+        if 'unpin_comment' in request.POST and request.user.is_staff:  # Unpinning for staffs
+            problem.solution_comment = None
+            problem.save()
+            messages.success(request, 'Solution has been unpinned.')
             return redirect('problems:problem_detail', pk=problem.id)
         
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.account = request.user
+            comment.problem = problem
+            parent_id = request.POST.get('parent_id', None) # Safely get parent_id
+            if parent_id:
+                comment.parent = get_object_or_404(Comment, id=parent_id)
+            comment.save()
+            return redirect('problems:problem_detail', pk=problem.id)
         else:
-            comment_form = CommentForm(request.POST)
-            if comment_form.is_valid():
-                comment = comment_form.save(commit=False)
-                comment.account = request.user
-                comment.problem = problem
-                comment.parent = None
-                comment.save()
-                print("Comment saved:", comment.content)
-                return redirect('problems:problem_detail', pk=problem.id)
-            else:
-                print("Comment form errors:", comment_form.errors)  # Log any form errors
+            messages.error(request, "There was an error with your reply.")
+            parent_id_with_error = request.POST.get('parent_id', None)
+        
+    else: # GET request or invalid POST
+        comment_form = CommentForm()
+        
+    show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
+    if show_solution:
+        pinned_comment = problem.solution_comment if problem.solution_comment else None
+        total_visible_comments = problem.comments.count()
+        visible_top_level_comments = problem.comments.filter(parent=None).exclude(id=problem.solution_comment.id if problem.solution_comment else None) # Exclude pinned comment only if it exists
     else:
-        reply_form = CommentForm()
+        pinned_comment = None
+        visible_comments = problem.comments.exclude(id__in=get_comment_tree_ids(problem.solution_comment))
+        total_visible_comments = visible_comments.count()
+        visible_top_level_comments = visible_comments.filter(parent=None)
+    user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
 
     return render(request, 'problem_detail.html', {
         'problem': problem,
-        'comments': comments,
+        'comments': visible_top_level_comments,
         'pinned_comment': pinned_comment,
-        'reply_form': reply_form,
+        'comment_form': comment_form,
+        'reply_form': comment_form,
+        'parent_id_with_error': parent_id_with_error,
         'user_has_commented': user_has_commented,
-        'total_comments': total_comments,
+        'total_comments': total_visible_comments,
         'show_solution': show_solution,
         'now': timezone.now(),
     })
 
-@receiver(post_save, sender=Problem)
-def update_solution_comment(sender, instance, created, **kwargs):
-    global updating_comment
-    if updating_comment:
-        return  # Exit if we're already updating to prevent recursion
-    
-    if not created and instance.solution_post_at:
-        updating_comment = True
-        try:
-            current_pinned_comment = instance.comments.filter(pinned=True).first()
-            if current_pinned_comment:
-                current_pinned_comment.content = instance.solution
-                current_pinned_comment.save()
-            else:
-                superuser = User.objects.filter(is_superuser=True).first()
-                if superuser and instance.solution != "<p><br></p>":
-                    Comment.objects.create(
-                        problem=instance,
-                        account=superuser,  # Use the account associated with the problem
-                        content=instance.solution,
-                        pinned=True,
-                        created_at=instance.solution_post_at
-                    )
-        finally:
-            updating_comment = False
-
-@receiver(post_save, sender=Comment)
-def update_problem_solution(sender, instance, created, **kwargs):
-    global updating_problem
-    if updating_problem:
-        return  # Exit if we're already updating to prevent recursion
-    try:
-        if instance.pinned:
-            # Update the related problem's solution if the pinned comment is updated
-            related_problem = instance.problem
-            related_problem.solution = instance.content
-            related_problem.solution_post_at = timezone.now()  # Update the time
-            related_problem.save()
-    finally:
-            updating_problem = False
-
-@login_required
 @staff_member_required
 def post_problem(request):
     if request.method == 'POST':
-        form = ProblemForm(request.POST, request.FILES)
-        if form.is_valid():
-            problem = form.save(commit=False)
-            if form.cleaned_data.get('scheduled_post_at'):
-                problem.scheduled_post_at = form.cleaned_data['scheduled_post_at']
-            else:
-                problem.scheduled_post_at = timezone.now()
-            if form.cleaned_data.get('solution_post_at'):
-                problem.solution_post_at = form.cleaned_data['solution_post_at']
-            else:
-                problem.solution_post_at = problem.scheduled_post_at
-            problem.save()
-            # Save the pinned comment if provided
-            solution_content = form.cleaned_data.get('solution')
-            if solution_content != "<p><br></p>":
-                Comment.objects.create(
-                    problem=problem,
-                    account=request.user,
-                    content=solution_content,
-                    pinned=True,
-                    created_at=problem.solution_post_at
-                )
-            messages.success(request, 'Added one new problem')
-            return redirect('problems:problems')
+        problem_form = ProblemForm(request.POST, request.FILES, prefix='problem')
+        solution_form = CommentForm(request.POST, prefix='solution')
+
+        if problem_form.is_valid() and solution_form.is_valid():
+            with transaction.atomic():
+                problem = problem_form.save(commit=False)
+                if not problem_form.cleaned_data.get('scheduled_post_at'):
+                    problem.scheduled_post_at = timezone.now()
+                if not problem_form.cleaned_data.get('solution_post_at'):
+                    problem.solution_post_at = problem.scheduled_post_at
+                problem.save()
+
+                # Save the pinned comment if provided
+                solution_content = solution_form.cleaned_data.get('content')
+                if not is_empty_content(solution_content):
+                    solution_comment = solution_form.save(commit=False)
+                    solution_comment.problem = problem
+                    solution_comment.account = request.user
+                    solution_comment.created_at = problem.solution_post_at
+                    solution_comment.save()
+                    problem.official_solution = solution_comment
+                    problem.save()
+                
+                messages.success(request, 'Added one new problem')
+                return redirect('problems:problems')
         else:
-            print(form.errors)
+            print("Problem Form Errors:", problem_form.errors)
+            print("Solution Form Errors:", solution_form.errors)
             messages.error(request, "Parameter error, failed to post")
     else:
-        form = ProblemForm()
-    return render(request, 'post_problem.html', {'form': form})
+        problem_form = ProblemForm(prefix='problem')
+        solution_form = CommentForm(prefix='solution')
+    return render(request, 'post_problem.html', {'problem_form': problem_form, 'solution_form': solution_form})
 
 @require_GET
 def search(request):
