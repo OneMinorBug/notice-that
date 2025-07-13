@@ -18,55 +18,69 @@
 {% block content %}
 <div class="ui vertical grid m-padded-tb-medium">
   <div class="ui container">
-    {% if messages %}
-      <div class="ui message">
-        <ul>
-          {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
     <div class="ui segment">
       <h2>Post Problem</h2>
-      <form method="POST" class="ui form" action="{% url 'problems:post_problem' %}" enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="field">
-            <label for="{{ form.title.id_for_label }}">Title</label>
-            {{ form.title }}
+      <form method="POST" class="ui form {% if problem_form.errors or solution_form.errors %}error{% endif %}" action="{% url 'problems:post_problem' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if problem_form.non_field_errors or solution_form.non_field_errors %}
+          <div class="ui error message">
+            {{ problem_form.non_field_errors }}
+            {{ solution_form.non_field_errors }}
           </div>
-          <div class="field">
-            <label for="{{ form.scheduled_post_at.id_for_label }}">Scheduled Post Time (optional)</label>
-            {{ form.scheduled_post_at }}  <!-- DateTime field -->
-          </div>
-          <div class="field">
-            <label for="{{ form.image.id_for_label }}">Image</label>
-            {{ form.image }}
-          </div>
-          <div class="field">
-            <label for="{{ form.content.id_for_label }}">Content</label>
-            <div id="editor—wrapper">
+        {% endif %}
+
+        <div class="field {% if problem_form.title.errors %}error{% endif %}">
+          <label for="{{ problem_form.title.id_for_label }}">Title</label>
+          {{ problem_form.title }}
+          {{ problem_form.title.errors }}
+        </div>
+        <div class="field {% if problem_form.scheduled_post_at.errors %}error{% endif %}">
+          <label for="{{ problem_form.scheduled_post_at.id_for_label }}">Scheduled Post Time (optional)</label>
+          {{ problem_form.scheduled_post_at }}
+          {{ problem_form.scheduled_post_at.errors }}
+        </div>
+        <div class="field {% if problem_form.image.errors %}error{% endif %}">
+          <label for="{{ problem_form.image.id_for_label }}">Image</label>
+          {{ problem_form.image }}
+          {{ problem_form.image.errors }}
+        </div>
+        <div class="field {% if problem_form.content.errors %}error{% endif %}">
+          <label>Content</label>
+          {% if problem_form.content.errors %}
+            <div class="ui error message">
+              {{ problem_form.content.errors }}
+            </div>
+          {% endif %}
+          <div id="editor—wrapper">
               <div id="toolbar-container"><!-- toolbar --></div>
-              <div id="editor-container" ><!-- editor --></div>
+              <div id="editor-container"><!-- editor --></div>
+          </div>
+          <textarea id="editor-content" name="{{ problem_form.content.html_name }}" style="display:none;">{{ problem_form.content.value|default:'' }}</textarea>
+        </div>
+        <div class="ui divider"></div>
+        <div class="field {% if solution_form.content.errors %}error{% endif %}">
+          <label>Solution (optional)</label>
+          {% if solution_form.content.errors %}
+            <div class="ui error message">
+              {{ solution_form.content.errors }}
             </div>
+          {% endif %}
+          <div id="solution-wrapper">
+              <div id="solution-toolbar-container"><!-- toolbar for solution --></div>
+              <div id="solution-editor-container"><!-- editor for solution --></div>
           </div>
-          <textarea id="editor-content" name="content" style="display:none;"></textarea>
-          <div class="field">
-            <label for="{{ form.solution.id_for_label }}">Solution (optional)</label>
-            <div id="solution-wrapper">
-                <div id="solution-toolbar-container"><!-- toolbar for solution --></div>
-                <div id="solution-editor-container"><!-- editor for solution --></div>
-            </div>
-          </div>
-          <textarea id="solution-content" name="solution" style="display:none;"></textarea>
-          <div class="field">
-            <label for="{{ form.solution_post_at.id_for_label }}">Solution Post Time (optional)</label>
-            {{ form.solution_post_at }}
-          </div>
-          <div class="ui right aligned container">
-            <a type="button" class="ui button" href={% url 'problems:home' %}>Back</a>
-            <button type="submit" class="ui m-primary button" id="submit-btn">Post</button>
-          </div>
+          <textarea id="solution-content" name="{{ solution_form.content.html_name }}" style="display:none;">{{ solution_form.content.value|default:'' }}</textarea>
+        </div>
+        <div class="field {% if problem_form.solution_post_at.errors %}error{% endif %}">
+          <label for="{{ problem_form.solution_post_at.id_for_label }}">Solution Post Time (optional)</label>
+          {{ problem_form.solution_post_at }}
+          {{ problem_form.solution_post_at.errors }}
+        </div>
+        <div class="ui right aligned container">
+          <a type="button" class="ui button" href={% url 'problems:home' %}>Back</a>
+          <button type="submit" class="ui m-primary button" id="submit-btn">Post</button>
+        </div>
       </form>
     </div>
   </div>

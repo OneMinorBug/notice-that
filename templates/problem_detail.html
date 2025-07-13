@@ -173,7 +173,7 @@
               <!-- Pin Button -->
               {% if request.user.is_staff %}
               <div class="actions">
-                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin as Solution</a>
+                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin</a>
               </div>
               <form id="pin-form-{{ comment.id }}" method="post" style="display: none;">
                   {% csrf_token %}

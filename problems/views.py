@@ -151,20 +151,21 @@ def post_problem(request):
                 # Save the pinned comment if provided
                 solution_content = solution_form.cleaned_data.get('content')
                 if not is_empty_content(solution_content):
-                    solution_comment = solution_form.save(commit=False)
-                    solution_comment.problem = problem
-                    solution_comment.account = request.user
-                    solution_comment.created_at = problem.solution_post_at
-                    solution_comment.save()
-                    problem.official_solution = solution_comment
-                    problem.save()
+                    solution_comment = Comment.objects.create(
+                        problem=problem,
+                        account=request.user,
+                        content=solution_content,
+                        created_at=problem.solution_post_at
+                    )
+                    problem.solution_comment = solution_comment
+                    problem.save() # Save the problem again to store the link
                 
                 messages.success(request, 'Added one new problem')
                 return redirect('problems:problems')
         else:
             print("Problem Form Errors:", problem_form.errors)
             print("Solution Form Errors:", solution_form.errors)
-            messages.error(request, "Parameter error, failed to post")
+            messages.error(request, "Parameter error, failed to post. Please check the form.")
     else:
         problem_form = ProblemForm(prefix='problem')
         solution_form = CommentForm(prefix='solution')

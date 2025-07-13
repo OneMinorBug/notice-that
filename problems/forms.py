@@ -21,3 +21,8 @@ class CommentForm(forms.ModelForm):
                 'rows': 3,  # Adjust the height if needed
             })
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Tell the form that the 'content' field is not required for validation
+        self.fields['content'].required = False
