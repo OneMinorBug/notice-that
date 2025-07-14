@@ -39,14 +39,14 @@
 			{% if parent_id_with_error == comment_id_str %}style="display: block;"{% else %}style="display: none;"{% endif %}>
 			{% csrf_token %}
 			<!-- Display errors for THIS specific reply form -->
-			{% if parent_id_with_error == comment_id_str and reply_form.errors %}
+			{% if comment_form.errors and parent_id_with_error == comment_id_str %}
 				<div class="ui error message">
-					{{ reply_form.content.errors }}
+					{{ comment_form.content.errors }}
 				</div>
 			{% endif %}
-			<div class="field {% if parent_id_with_error == comment_id_str and reply_form.content.errors %}error{% endif %}">
+			<div class="field {% if comment_form.content.errors and parent_id_with_error == comment_id_str %}error{% endif %}">
 				<!-- The JS will need to target these unique textareas -->
-				<textarea name="content" placeholder="Write your reply...">{% if parent_id_with_error == comment_id_str %}{{ reply_form.content.value|default:'' }}{% endif %}</textarea>
+				<textarea name="content" placeholder="Write your reply...">{% if parent_id_with_error == comment_id_str %}{{ comment_form.content.value|default:'' }}{% endif %}</textarea>
 			</div>
 			<input type="hidden" name="parent_id" value="{{ comment.id }}">
 			<div class="ui right aligned container">
