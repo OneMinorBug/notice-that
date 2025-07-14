@@ -63,15 +63,11 @@
           <!-- Display any validation errors -->
           {% if comment_form.errors and not parent_id_with_error%}
             <div class="ui error message">
-              <ul class="list">
-                {% for error in comment_form.content.errors %}
-                  <li>{{ error }}</li>
-                {% endfor %}
-              </ul>
+                {{ comment_form.content.errors }}
             </div>
           {% endif %}
 
-          <div class="field {% if comment_form.content.errors %}error{% endif %}">
+          <div class="field {% if comment_form.content.errors and not parent_id_with_error %}error{% endif %}">
             <div id="editor—wrapper">
               <div id="toolbar-container"><!-- toolbar --></div>
               <div id="editor-container" ><!-- editor --></div>
@@ -95,132 +91,19 @@
       
       {% if user_has_commented or request.user.is_staff %}
         <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
-        <!-- Display the pinned comment if it exists -->
         <div class="ui comments m-w">
-        {% if pinned_comment and show_solution %}
-          <div class="comment">
-            <a class="avatar">
-              <img src="{{ pinned_comment.account.profile.profile_picture.url }}" 
-                   onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
-            </a>
-            <div class="content">
-              <a class="author">{{ pinned_comment.account.username }}</a>
-              <div class="metadata">
-                <span class="date">{{ pinned_comment.created_at|date:"F j, Y" }}</span>
-              </div>
-              <div class="m-medium-text text"><div class="ui m-bprimary horizontal label">Solution</div>{{ pinned_comment.content|safe }}</div>
-              <div class="actions">
-                <a class="reply" id="reply-button-{{ pinned_comment.id }}" data-comment-id="{{ pinned_comment.id }}">Reply</a>
-              </div>
-              
-              <!-- Unpin Button -->
-              {% if request.user.is_staff %}
-              <div class="actions">
-                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('unpin-form-{{ pinned_comment.id }}').submit();">Unpin</a>
-              </div>
-              <form id="unpin-form-{{ pinned_comment.id }}" method="post" style="display: none;">
-                  {% csrf_token %}
-                  <input type="hidden" name="unpin_comment" value="true">
-              </form>
-              {% endif %}
-
-              <!-- Reply Form -->
-              <form class="ui reply form" method="post" style="display: none;" id="reply-form-{{ pinned_comment.id }}">
-                {% csrf_token %}
-                {{ reply_form.as_p }}
-                <input type="hidden" name="parent_id" value="{{ pinned_comment.id }}">
-                <div class="ui right aligned container">
-									<button class="ui m-primary submit labeled icon button" type="submit">
-										<i class="m-primary icon edit"></i> Reply
-									</button>
-								</div>
-              </form>
-
-              <!-- Display nested replies -->
-              {% for reply in pinned_comment.replies.all %}
-              <div class="comment" style="margin-left: 30px;">
-                <a class="avatar">
-                  <img src={{ reply.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
-                </a>
-                <div class="content">
-                  <a class="author">{{ reply.account.username }}</a>
-                  <div class="metadata">
-                    <span class="date">{{ reply.created_at|date:"F j, Y" }}</span>
-                  </div>
-                  <div class="m-medium-text text">{{ reply.content|safe }}</div>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-        
-        {% for comment in comments reversed %}
-          <div class="comment">
-            <a class="avatar">
-              <img src={{ comment.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
-            </a>
-            <div class="content">
-              <a class="author">{{ comment.account.username }}</a>
-              <div class="metadata">
-                <span class="date">{{ comment.created_at|date:"F j, Y" }}</span>
-              </div>
-              <div class="m-medium-text text">{{ comment.content|safe }}</div>
-              <div class="actions">
-                <a class="reply" id="reply-button-{{ comment.id }}" data-comment-id="{{ comment.id }}">Reply</a>
-              </div>
-
-              <!-- Pin Button -->
-              {% if request.user.is_staff %}
-              <div class="actions">
-                <a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin</a>
-              </div>
-              <form id="pin-form-{{ comment.id }}" method="post" style="display: none;">
-                  {% csrf_token %}
-                  <input type="hidden" name="pin_comment_id" value="{{ comment.id }}">
-              </form>
-              {% endif %}
-
-              <!-- Reply Form -->
-              {% with comment_id_str=comment.id|stringformat:"s" %}
-                <form class="ui reply form" method="post" id="reply-form-{{ comment.id }}" {% if parent_id_with_error == comment_id_str %}style="display: block;"{% else %}style="display: none;"{% endif %}>
-                  {% csrf_token %}
-                  <!-- Display errors for THIS specific reply form -->
-                  {% if parent_id_with_error == comment_id_str and reply_form.errors %}
-                      <div class="ui error message">
-                          {{ reply_form.content.errors }}
-                      </div>
-                  {% endif %}
-                  
-                  {{ reply_form.as_p }}
-                  <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                  <div class="ui right aligned container">
-                    <button class="ui m-primary submit labeled icon button" type="submit">
-                      <i class="m-primary icon edit"></i> Reply
-                    </button>
-                  </div>
-                </form>
-              {% endwith %}
-
-              <!-- Display nested replies -->
-              {% for reply in comment.replies.all %}
-              <div class="comment" style="margin-left: 30px;">
-                <a class="avatar">
-                  <img src={{ reply.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
-                </a>
-                <div class="content">
-                  <a class="author">{{ reply.account.username }}</a>
-                  <div class="metadata">
-                    <span class="date">{{ reply.created_at|date:"F j, Y" }}</span>
-                  </div>
-                  <div class="m-medium-text text">{{ reply.content|safe }}</div>
-                </div>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-        {% endfor %}
-      </div>
+          {% if pinned_comment and show_solution %}
+            {% with comment=pinned_comment comment_id_str=pinned_comment.id|stringformat:"s" is_pinned=True %}
+              {% include "components/comment.html" %}
+            {% endwith %}
+          {% endif %}
+          
+          {% for comment in comments reversed %}
+            {% with comment=comment comment_id_str=comment.id|stringformat:"s" is_pinned=False %}
+              {% include "components/comment.html" %}
+            {% endwith %}
+          {% endfor %}
+        </div>
 
       {% else %}
         <div class="ui icon info message">

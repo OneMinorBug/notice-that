@@ -13,21 +13,11 @@ from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-from django.utils.html import strip_tags
 from .models import Problem, Comment
 from .forms import ProblemForm, CommentForm
 
 # Create your views here.
 User = get_user_model()
-
-def is_empty_content(content):
-    if not content:
-        return True
-    # Strip HTML tags
-    text_only = strip_tags(content)
-    # Replace &nbsp; with regular space and strip
-    cleaned = text_only.replace('&nbsp;', ' ').strip()
-    return not cleaned or cleaned.isspace()
 
 # Finds all IDs in a comment tree, starting from a given comment. Recursion.
 def get_comment_tree_ids(start_comment):
@@ -71,6 +61,7 @@ def problem_detail(request, pk):
         messages.error(request, "This problem is not available.")
         previous_page = request.META.get('HTTP_REFERER', '/')
         return redirect(previous_page)
+    comment_form = CommentForm()
     parent_id_with_error = None
 
     if request.method == 'POST':
@@ -96,17 +87,14 @@ def problem_detail(request, pk):
             comment = comment_form.save(commit=False)
             comment.account = request.user
             comment.problem = problem
-            parent_id = request.POST.get('parent_id', None) # Safely get parent_id
+            parent_id = request.POST.get('parent_id')
             if parent_id:
                 comment.parent = get_object_or_404(Comment, id=parent_id)
             comment.save()
             return redirect('problems:problem_detail', pk=problem.id)
         else:
-            messages.error(request, "There was an error with your reply.")
-            parent_id_with_error = request.POST.get('parent_id', None)
-        
-    else: # GET request or invalid POST
-        comment_form = CommentForm()
+            messages.error(request, "There was an error with your comment.")
+            parent_id_with_error = request.POST.get('parent_id')
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
     if show_solution:
@@ -137,7 +125,7 @@ def problem_detail(request, pk):
 def post_problem(request):
     if request.method == 'POST':
         problem_form = ProblemForm(request.POST, request.FILES, prefix='problem')
-        solution_form = CommentForm(request.POST, prefix='solution')
+        solution_form = CommentForm(request.POST, prefix='solution', content_required=False)  # !!! Solution is not required
 
         if problem_form.is_valid() and solution_form.is_valid():
             with transaction.atomic():
@@ -150,13 +138,12 @@ def post_problem(request):
 
                 # Save the pinned comment if provided
                 solution_content = solution_form.cleaned_data.get('content')
-                if not is_empty_content(solution_content):
-                    solution_comment = Comment.objects.create(
-                        problem=problem,
-                        account=request.user,
-                        content=solution_content,
-                        created_at=problem.solution_post_at
-                    )
+                if solution_content:
+                    solution_comment = solution_form.save(commit=False)
+                    solution_comment.problem = problem
+                    solution_comment.account = request.user
+                    solution_comment.created_at = problem.solution_post_at
+                    solution_comment.save()
                     problem.solution_comment = solution_comment
                     problem.save() # Save the problem again to store the link
                 
@@ -168,7 +155,7 @@ def post_problem(request):
             messages.error(request, "Parameter error, failed to post. Please check the form.")
     else:
         problem_form = ProblemForm(prefix='problem')
-        solution_form = CommentForm(prefix='solution')
+        solution_form = CommentForm(prefix='solution', content_required=False) # !!! Solution is not required
     return render(request, 'post_problem.html', {'problem_form': problem_form, 'solution_form': solution_form})
 
 @require_GET
