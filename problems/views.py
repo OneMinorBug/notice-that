@@ -93,8 +93,10 @@ def problem_detail(request, pk):
             comment.save()
             return redirect('problems:problem_detail', pk=problem.id)
         else:
+            print("Comment Form Errors:", comment_form.errors)
             messages.error(request, "There was an error with your comment.")
             parent_id_with_error = request.POST.get('parent_id')
+            print("Parent ID with error:", parent_id_with_error)
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
     if show_solution:
@@ -113,7 +115,6 @@ def problem_detail(request, pk):
         'comments': visible_top_level_comments,
         'pinned_comment': pinned_comment,
         'comment_form': comment_form,
-        'reply_form': comment_form,
         'parent_id_with_error': parent_id_with_error,
         'user_has_commented': user_has_commented,
         'total_comments': total_visible_comments,
