@@ -1,0 +1,75 @@
+<div class="comment">
+	<a class="avatar">
+		<img src={{ comment.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+	</a>
+	<div class="content">
+		<a class="author">{{ comment.account.username }}</a>
+		<div class="metadata">
+			<span class="date">{{ comment.created_at|date:"F j, Y" }}</span>
+		</div>
+		<div class="m-medium-text text">
+      {% if is_pinned %}<div class="ui m-bprimary horizontal label">Solution</div>{% endif %}
+      {{ comment.content|safe }}
+    </div>
+		<div class="actions">
+			{% if request.user.is_staff %}
+				{% if is_pinned %}
+					<!-- Unpin Button -->
+					<a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('unpin-form-{{ pinned_comment.id }}').submit();">Unpin</a>
+					<form id="unpin-form-{{ pinned_comment.id }}" method="post" style="display: none;">
+						{% csrf_token %}
+						<input type="hidden" name="unpin_comment" value="true">
+					</form>
+				{% else %}
+					<!-- Pin Button -->
+					<a class="reply" href="#" onclick="event.preventDefault(); document.getElementById('pin-form-{{ comment.id }}').submit();">Pin</a>
+					<form id="pin-form-{{ comment.id }}" method="post" style="display: none;">
+						{% csrf_token %}
+						<input type="hidden" name="pin_comment_id" value="{{ comment.id }}">
+					</form>
+				{% endif %}
+			{% endif %}
+		</div>
+		<div class="actions">
+			<a class="reply" id="reply-button-{{ comment.id }}" data-comment-id="{{ comment.id }}">Reply</a>
+		</div>
+
+		<!-- Reply Form -->
+		<form class="ui reply form" method="post" id="reply-form-{{ comment.id }}" 
+			{% if parent_id_with_error == comment_id_str %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+			{% csrf_token %}
+			<!-- Display errors for THIS specific reply form -->
+			{% if parent_id_with_error == comment_id_str and reply_form.errors %}
+				<div class="ui error message">
+					{{ reply_form.content.errors }}
+				</div>
+			{% endif %}
+			<div class="field {% if parent_id_with_error == comment_id_str and reply_form.content.errors %}error{% endif %}">
+				<!-- The JS will need to target these unique textareas -->
+				<textarea name="content" placeholder="Write your reply...">{% if parent_id_with_error == comment_id_str %}{{ reply_form.content.value|default:'' }}{% endif %}</textarea>
+			</div>
+			<input type="hidden" name="parent_id" value="{{ comment.id }}">
+			<div class="ui right aligned container">
+				<button class="ui m-primary submit labeled icon button" type="submit">
+					<i class="m-primary icon edit"></i> Reply
+				</button>
+			</div>
+		</form>
+
+		<!-- Display nested replies -->
+		{% for reply in comment.replies.all %}
+		<div class="comment" style="margin-left: 30px;">
+			<a class="avatar">
+				<img src={{ reply.account.profile.profile_picture.url }} onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+			</a>
+			<div class="content">
+				<a class="author">{{ reply.account.username }}</a>
+				<div class="metadata">
+					<span class="date">{{ reply.created_at|date:"F j, Y" }}</span>
+				</div>
+				<div class="m-medium-text text">{{ reply.content|safe }}</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
