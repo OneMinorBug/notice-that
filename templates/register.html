@@ -16,52 +16,82 @@
 <div class="ui container">
   <div class="ui middle aligned centered grid m-padded-tb-medium">
     <div class="column">
-      <div class="ui large form">
-        <h2>Register</h2>
-        <form method="post" id="registration-form">
-          {% csrf_token %}
-          <div class="field">
-            <label for="{{ form.username.id_for_label }}">Username</label>
-            {{ form.username }}  <!-- Render username field -->
-            <span id="username-error" style="color: red;"></span>  <!-- For showing username error -->
-          </div>
-          <div class="field">
-            <label for="{{ form.email.id_for_label }}">Email</label>
-            {{ form.email }}  <!-- Render email field -->
-            <span id="email-error" style="color: red;"></span>  <!-- For showing email error -->
-          </div>
-          <div class="field">
-            <label for="{{ form.verification_code.id_for_label }}">Verification Code</label>
-            <div class="ui action input">
-              {{ form.verification_code }}  <!-- Render verification code field -->
-              <button type="button" class="ui m-primary button" id="send-code-btn">Send Code</button> <!-- Button to send code -->
-            </div>
-          </div>
-          <div class="field">
-            <label for="{{ form.password.id_for_label }}">Password</label>
-            {{ form.password }}  <!-- Render password field -->
-          </div>
-          <div class="field">
-            <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
-            {{ form.confirm_password }}  <!-- Render confirm password field -->
-          </div>
-          <br>
-          <button type="submit" class="ui m-primary button">Register</button>
-        </form>
-        <div class="ui container">
-          <br>
-          <p>Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+      {% for message in messages %}
+        <div class="ui message {{ message.tags }}">
+          {{ message }}
         </div>
-        {% if messages %}
-          <div class="ui message">
-            <ul>
-              {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
+      {% endfor %}
+
+      <h2>Register</h2>
+      {% if form.non_field_errors %}
+        <div class="ui error message">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" class="ui large form" id="registration-form">
+        {% csrf_token %}
+        <!-- Username Field -->
+        <div class="field {% if form.username.errors %}error{% endif %}">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="ui error message">
+              {{ form.username.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Email Field -->
+        <div class="field {% if form.email.errors %}error{% endif %}">
+          <label for="{{ form.email.id_for_label }}">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="ui error message">
+              {{ form.email.errors }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Verification Code Field -->
+        <div class="field {% if form.verification_code.errors %}error{% endif %}">
+          <label for="{{ form.verification_code.id_for_label }}">Verification Code</label>
+          <div class="ui action input">
+            {{ form.verification_code }}
+            <button type="button" class="ui m-primary button" id="send-code-btn">Send Code</button>
           </div>
-        {% endif %}
-      </div>
+          {% if form.verification_code.errors %}
+            <div class="ui error message">
+              {{ form.verification_code.errors }}
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- Password Field -->
+        <div class="field {% if form.password.errors %}error{% endif %}">
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <div class="ui error message">
+              {{ form.password.errors }}
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- Confirm Password Field -->
+        <div class="field {% if form.confirm_password.errors %}error{% endif %}">
+          <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+          {{ form.confirm_password }}
+          {% if form.confirm_password.errors %}
+            <div class="ui error message">
+              {{ form.confirm_password.errors }}
+            </div>
+          {% endif %}
+        </div>
+        <button type="submit" class="ui m-primary button">Register</button>
+        <br>
+        <p>Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+      </form>
     </div>
   </div>
 </div>

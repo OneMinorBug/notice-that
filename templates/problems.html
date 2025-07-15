@@ -8,6 +8,11 @@
 {% block content %}
 <div class="ui grid m-white m-padded-tb-medium">
 	<div class="ui container">
+		{% for message in messages %}
+			<div class="ui message {{ message.tags }}">
+				{{ message }}
+			</div>
+		{% endfor %}
 		<h1>Problems</h1>
 		<div class="ui three column computer only grid">
 			{% for problem in problems reversed %}

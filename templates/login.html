@@ -16,34 +16,37 @@
 <div class="ui container">
   <div class="ui middle aligned centered grid m-padded-tb-medium">
     <div class="column">
-      <div class="ui large form">
-        <h2>Login</h2>
-        <form method="post">
-          {% csrf_token %}
-          <div class="field">
-            <label for="id_username">Username</label>
-            <input type="text" name="username" id="id_username" required />
-          </div>
-          <div class="field">
-            <label for="id_password">Password</label>
-            <input type="password" name="password" id="id_password" required />
-          </div>
-          <button type="submit" class="ui m-primary button">Login</button>
-        </form>
-        <div class="ui container">
-          <br>
-          <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+      {% for message in messages %}
+        <div class="ui message {{ message.tags }}">
+          {{ message }}
         </div>
-        {% if messages %}
-          <div class="ui message">
-            <ul>
-              {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-        {% endif %}
-      </div>
+      {% endfor %}
+
+      <h2>Login</h2>
+      {% if form.non_field_errors %}
+        <div class="ui error message">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" class="ui large form">
+        {% csrf_token %}
+        <!-- Username Field  -->
+        <div class="field {% if form.username.errors %}error{% endif %}">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+        </div>
+
+        <!-- Password Field -->
+        <div class="field {% if form.password.errors %}error{% endif %}">
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          {{ form.password }}
+        </div>
+        
+        <button type="submit" class="ui m-primary button">Login</button>
+        <br>
+        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+      </form>
     </div>
   </div>
 </div>

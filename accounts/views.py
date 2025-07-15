@@ -3,11 +3,12 @@ import string
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from django.http import JsonResponse
+from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistrationForm
 
 def generate_verification_code():
@@ -76,16 +77,15 @@ def register(request):
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        form = AuthenticationForm(request, data=request.POST)
 
-        if user is not None:
-            login(request, user)
+        if form.is_valid():
+            login(request, form.get_user())
             return redirect('problems:home')
-        else:
-            messages.error(request, "Login failed. Please check your username and password.")
-    return render(request, 'login.html')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'login.html', {'form': form})
 
 @login_required
 def logout_view(request):

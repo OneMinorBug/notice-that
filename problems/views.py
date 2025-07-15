@@ -19,7 +19,7 @@ from .forms import ProblemForm, CommentForm
 # Create your views here.
 User = get_user_model()
 
-# Finds all IDs in a comment tree, starting from a given comment. Recursion.
+# Helper function to find all IDs in a comment tree, used for solution comments visibility in problem detail view.
 def get_comment_tree_ids(start_comment):
     if not start_comment:
         return set()

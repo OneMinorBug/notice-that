@@ -14,7 +14,7 @@ class RegistrationForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
-            raise ValidationError("Email already in use.")
+            raise ValidationError("Email already in use. Please use a different email address.")
         return email
 
     def clean(self):
@@ -26,7 +26,7 @@ class RegistrationForm(forms.ModelForm):
 
         # Password confirmation check
         if password and confirm_password and password != confirm_password:
-            raise ValidationError("Passwords do not match.")
+            raise ValidationError("Passwords do not match. Please try again.")
 
         # Check if the email matches the one used for sending the verification code
         verification_email = self.request.session.get('verification_email')
@@ -36,7 +36,7 @@ class RegistrationForm(forms.ModelForm):
             raise ValidationError("The email does not match the one used for verification.")
         
         if not session_verification_code or session_verification_code != verification_code:
-            raise ValidationError("Invalid verification code.")
+            raise ValidationError("Invalid verification code. Please try again.")
 
         return cleaned_data
 
