@@ -35,18 +35,18 @@
 		</div>
 
 		<!-- Reply Form -->
-		<form class="ui reply form" method="post" id="reply-form-{{ comment.id }}" 
-			{% if parent_id_with_error == comment_id_str %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+		<form class="ui reply form" method="post" id="reply-form-{{ comment.id }}"
+			{% if parent_id_with_error == comment_id_str %}style="display: block;"{% else %}style="display: none;"{% endif %} novalidate>
 			{% csrf_token %}
-			<!-- Display errors for THIS specific reply form -->
-			{% if comment_form.errors and parent_id_with_error == comment_id_str %}
-				<div class="ui error message">
-					{{ comment_form.content.errors }}
-				</div>
-			{% endif %}
 			<div class="field {% if comment_form.content.errors and parent_id_with_error == comment_id_str %}error{% endif %}">
 				<!-- The JS will need to target these unique textareas -->
 				<textarea name="content" placeholder="Write your reply...">{% if parent_id_with_error == comment_id_str %}{{ comment_form.content.value|default:'' }}{% endif %}</textarea>
+				<!-- Display errors for THIS specific reply form -->
+				{% for error in comment_form.content.errors %}
+					{% if parent_id_with_error == comment_id_str %}
+						<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+					{% endif %}
+				{% endfor %}
 			</div>
 			<input type="hidden" name="parent_id" value="{{ comment.id }}">
 			<div class="ui right aligned container">
