@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block layout %}
+    <div class="ui middle aligned center aligned grid" style="min-height: 70vh;">
+        <div class="column">
+            <div class="ui basic segment">
+                <h1 class="ui header" style="font-size: 12rem; margin-bottom: 0;">404</h1>
+                <p style="font-size: 1.5rem; margin-top: -2rem;">Page Not Found</p>
+                <p style="font-size: 1.2rem; max-width: 450px; margin: 2.5rem auto;">
+                    Oops! The page you're looking for seems to have vanished into another dimension.
+                </p>
+                <a href="{% url 'problems:home' %}" class="ui m-primary button">
+                    <i class="home icon"></i>Return to Origin
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

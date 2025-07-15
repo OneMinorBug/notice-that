@@ -1,46 +1,64 @@
 import random
 import string
+import json
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import get_user_model
 from .forms import RegistrationForm
+
+User = get_user_model()
 
 def generate_verification_code():
     #Generates a random 6-character verification code.
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
+@require_POST
 def send_verification_code(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        if email:
-            verification_code = generate_verification_code()
-            # Store both email and code in session
-            request.session['verification_code'] = verification_code
-            request.session['verification_email'] = email  # Store email
-            request.session.set_expiry(0)
+    try:
+        email = json.loads(request.body).get('email')
 
-            # Send the code via email
-            subject = f'NoticeThat Email Verification Code - {verification_code}'
-            message = f'Hey there, \n\n Thank you for signing up for notice-that.com. Your email verification code is: \n\n <b>{verification_code}</b> \n\n If you received this email by mistake, you can ignore it.'
-            from_email = settings.DEFAULT_FROM_EMAIL
-            recipient_list = [email]
+        if not email:
+            return JsonResponse({'status': 'error', 'message': 'Please provide an email address.'}, status=400)
 
-            try:
-                send_mail(subject, message, from_email, recipient_list)
-                return render(request, 'register.html', {
-                    'form': RegistrationForm(),
-                    'success': f"Verification code sent to {email}."
-                })
-            except Exception as e:
-                messages.error(request, "Error sending verification code. Please try again.")
-        else:
-            messages.error(request, "Please provide an email address.")
-    return redirect('accounts:register')
+        validate_email(email)
+
+        # Check if the email is already in use
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'status': 'error', 'message': 'This email is already registered.'}, status=400)
+
+    except (json.JSONDecodeError, ValidationError):
+        # Bad JSON or a bad email format from validate_email
+        return JsonResponse({'status': 'error', 'message': 'Please provide a valid email address.'}, status=400)
+    except Exception:
+        return JsonResponse({'status': 'error', 'message': 'An unexpected error occurred. Please try again later.'}, status=500)
+
+    try:
+        verification_code = generate_verification_code()
+        # Store both email and code in session
+        request.session['verification_code'] = verification_code
+        request.session['verification_email'] = email
+        request.session.set_expiry(300)  # Set session expiry to 5 minutes
+
+        # Send the code via email
+        subject = f'NoticeThat Email Verification Code - {verification_code}'
+        message = f'Hey there, \n\n Thank you for signing up for notice-that.com. Your email verification code is: \n\n <b>{verification_code}</b> \n\n This code will expire in 5 minutes.\n\n If you received this email by mistake, you can ignore it.'
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)
+
+        return JsonResponse({'status': 'success', 'message': f'Verification code sent to {email}.'})
+
+    except Exception as e:
+        print(f"Error sending email: {e}") 
+        return JsonResponse({'status': 'error', 'message': 'Failed to send verification code. Please try again later.'}, status=500)
 
 
 def check_username(request):
@@ -76,16 +94,15 @@ def register(request):
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        form = AuthenticationForm(request, data=request.POST)
 
-        if user is not None:
-            login(request, user)
+        if form.is_valid():
+            login(request, form.get_user())
             return redirect('problems:home')
-        else:
-            messages.error(request, "Login failed. Please check your username and password.")
-    return render(request, 'login.html')
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'login.html', {'form': form})
 
 @login_required
 def logout_view(request):

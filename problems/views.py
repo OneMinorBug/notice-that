@@ -19,7 +19,7 @@ from .forms import ProblemForm, CommentForm
 # Create your views here.
 User = get_user_model()
 
-# Finds all IDs in a comment tree, starting from a given comment. Recursion.
+# Helper function to find all IDs in a comment tree, used for solution comments visibility in problem detail view.
 def get_comment_tree_ids(start_comment):
     if not start_comment:
         return set()
@@ -89,12 +89,21 @@ def problem_detail(request, pk):
             comment.problem = problem
             parent_id = request.POST.get('parent_id')
             if parent_id:
-                comment.parent = get_object_or_404(Comment, id=parent_id)
-            comment.save()
-            return redirect('problems:problem_detail', pk=problem.id)
-        else:
-            messages.error(request, "There was an error with your comment.")
-            parent_id_with_error = request.POST.get('parent_id')
+                try:
+                    comment.parent = Comment.objects.get(id=parent_id, problem=problem)
+                except Comment.DoesNotExist:
+                    # Handle case where parent comment doesn't exist or belongs to another problem
+                    messages.error(request, "Invalid reply target.")
+                    # Fall through to render the form with an error
+            if not comment_form.errors: # Double-check no errors were added during parent lookup
+                comment.save()
+                return redirect('problems:problem_detail', pk=problem.id)
+        
+        # This block will now be reached if form is invalid OR if parent_id was bad
+        print("Comment Form Errors:", comment_form.errors)
+        messages.error(request, "There was an error with your comment.")
+        parent_id_with_error = request.POST.get('parent_id')
+        print("Parent ID with error:", parent_id_with_error)
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
     if show_solution:
@@ -113,7 +122,6 @@ def problem_detail(request, pk):
         'comments': visible_top_level_comments,
         'pinned_comment': pinned_comment,
         'comment_form': comment_form,
-        'reply_form': comment_form,
         'parent_id_with_error': parent_id_with_error,
         'user_has_commented': user_has_commented,
         'total_comments': total_visible_comments,
@@ -121,6 +129,7 @@ def problem_detail(request, pk):
         'now': timezone.now(),
     })
 
+@login_required
 @staff_member_required
 def post_problem(request):
     if request.method == 'POST':

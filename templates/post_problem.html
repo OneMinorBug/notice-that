@@ -20,9 +20,8 @@
   <div class="ui container">
     <div class="ui segment">
       <h2>Post Problem</h2>
-      <form method="POST" class="ui form {% if problem_form.errors or solution_form.errors %}error{% endif %}" action="{% url 'problems:post_problem' %}" enctype="multipart/form-data">
+      <form method="POST" class="ui form {% if problem_form.errors or problem_form.non_field_errors or solution_form.errors or solution_form.non_field_errors %}error{% endif %}" action="{% url 'problems:post_problem' %}" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
-
         {% if problem_form.non_field_errors or solution_form.non_field_errors %}
           <div class="ui error message">
             {{ problem_form.non_field_errors }}
@@ -33,49 +32,53 @@
         <div class="field {% if problem_form.title.errors %}error{% endif %}">
           <label for="{{ problem_form.title.id_for_label }}">Title</label>
           {{ problem_form.title }}
-          {{ problem_form.title.errors }}
+          {% if problem_form.title.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ problem_form.title.errors.0 }}</div>
+          {% endif %}
         </div>
         <div class="field {% if problem_form.scheduled_post_at.errors %}error{% endif %}">
           <label for="{{ problem_form.scheduled_post_at.id_for_label }}">Scheduled Post Time (optional)</label>
           {{ problem_form.scheduled_post_at }}
-          {{ problem_form.scheduled_post_at.errors }}
+          {% if problem_form.scheduled_post_at.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ problem_form.scheduled_post_at.errors.0 }}</div>
+          {% endif %}
         </div>
         <div class="field {% if problem_form.image.errors %}error{% endif %}">
           <label for="{{ problem_form.image.id_for_label }}">Image</label>
           {{ problem_form.image }}
-          {{ problem_form.image.errors }}
+          {% if problem_form.image.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ problem_form.image.errors.0 }}</div>
+          {% endif %}
         </div>
         <div class="field {% if problem_form.content.errors %}error{% endif %}">
           <label>Content</label>
-          {% if problem_form.content.errors %}
-            <div class="ui error message">
-              {{ problem_form.content.errors }}
-            </div>
-          {% endif %}
           <div id="editor—wrapper">
               <div id="toolbar-container"><!-- toolbar --></div>
               <div id="editor-container"><!-- editor --></div>
           </div>
           <textarea id="editor-content" name="{{ problem_form.content.html_name }}" style="display:none;">{{ problem_form.content.value|default:'' }}</textarea>
+          {% if problem_form.content.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ problem_form.content.errors.0 }}</div>
+          {% endif %}
         </div>
         <div class="ui divider"></div>
         <div class="field {% if solution_form.content.errors %}error{% endif %}">
           <label>Solution (optional)</label>
-          {% if solution_form.content.errors %}
-            <div class="ui error message">
-              {{ solution_form.content.errors }}
-            </div>
-          {% endif %}
           <div id="solution-wrapper">
               <div id="solution-toolbar-container"><!-- toolbar for solution --></div>
               <div id="solution-editor-container"><!-- editor for solution --></div>
           </div>
           <textarea id="solution-content" name="{{ solution_form.content.html_name }}" style="display:none;">{{ solution_form.content.value|default:'' }}</textarea>
+          {% if solution_form.content.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ solution_form.content.errors.0 }}</div>
+          {% endif %}
         </div>
         <div class="field {% if problem_form.solution_post_at.errors %}error{% endif %}">
           <label for="{{ problem_form.solution_post_at.id_for_label }}">Solution Post Time (optional)</label>
           {{ problem_form.solution_post_at }}
-          {{ problem_form.solution_post_at.errors }}
+          {% if problem_form.solution_post_at.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ problem_form.solution_post_at.errors.0 }}</div>
+          {% endif %}
         </div>
         <div class="ui right aligned container">
           <a type="button" class="ui button" href={% url 'problems:home' %}>Back</a>
@@ -85,11 +88,11 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
-
+{% block scripts %}
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
 <script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
 <script src="{% static 'js/post.js' %}"></script>
-
 {% endblock %}

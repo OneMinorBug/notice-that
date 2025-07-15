@@ -16,35 +16,62 @@
 <div class="ui container">
   <div class="ui middle aligned centered grid m-padded-tb-medium">
     <div class="column">
-      <div class="ui large form">
-        <h2>Login</h2>
-        <form method="post">
-          {% csrf_token %}
-          <div class="field">
-            <label for="id_username">Username</label>
-            <input type="text" name="username" id="id_username" required />
-          </div>
-          <div class="field">
-            <label for="id_password">Password</label>
-            <input type="password" name="password" id="id_password" required />
-          </div>
-          <button type="submit" class="ui m-primary button">Login</button>
-        </form>
-        <div class="ui container">
-          <br>
-          <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+      {% for message in messages %}
+        <div class="ui message {{ message.tags }}">
+          {{ message }}
         </div>
-        {% if messages %}
-          <div class="ui message">
-            <ul>
-              {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-              {% endfor %}
-            </ul>
+      {% endfor %}
+
+      <h2>Login</h2>
+      <form method="post" class="ui large form {% if form.errors or form.non_field_errors %}error{% endif %}" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="ui error message">
+            {{ form.non_field_errors }}
           </div>
         {% endif %}
-      </div>
+
+        <!-- Username Field  -->
+        <div class="field {% if form.username.errors %}error{% endif %}">
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Password Field -->
+        <div class="field {% if form.password.errors %}error{% endif %}">
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          {{ form.password }}
+        </div>
+        
+        <button type="submit" class="ui m-primary button">Login</button>
+        <br>
+        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+      </form>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+  $('.ui.form').form({
+    on: 'blur',
+    inline: true,
+    fields: {
+      username: {
+        identifier: 'username',
+        rules: [{ type: 'empty', prompt: 'Please enter a username' }]
+      },
+      password: {
+        identifier: 'password',
+        rules: [{ type: 'empty', prompt: 'Please enter a password' }]
+      }
+    }
+  });
+});
+</script>
 {% endblock %}
