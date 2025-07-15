@@ -20,15 +20,15 @@
   <div class="ui container">
     <div class="ui segment">
       <h2>Post Problem</h2>
+      {% if problem_form.non_field_errors or solution_form.non_field_errors %}
+        <div class="ui error message">
+          {{ problem_form.non_field_errors }}
+          {{ solution_form.non_field_errors }}
+        </div>
+      {% endif %}
+      
       <form method="POST" class="ui form {% if problem_form.errors or solution_form.errors %}error{% endif %}" action="{% url 'problems:post_problem' %}" enctype="multipart/form-data">
         {% csrf_token %}
-
-        {% if problem_form.non_field_errors or solution_form.non_field_errors %}
-          <div class="ui error message">
-            {{ problem_form.non_field_errors }}
-            {{ solution_form.non_field_errors }}
-          </div>
-        {% endif %}
 
         <div class="field {% if problem_form.title.errors %}error{% endif %}">
           <label for="{{ problem_form.title.id_for_label }}">Title</label>
