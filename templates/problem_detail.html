@@ -57,23 +57,18 @@
     </div>
     <div class="ui bottom attached segment m-padded-tb-medium m-padded-lr-big">
       {% if user.is_authenticated %}
-        <form class="ui reply form" method="post">
+        <form class="ui reply form {% if comment_form.content.errors %}error{% endif %}" method="post" id="comment-form" novalidate>
           {% csrf_token %}
-
-          <!-- Display any validation errors -->
-          {% if comment_form.errors and not parent_id_with_error%}
-            <div class="ui error message">
-                {{ comment_form.content.errors }}
-            </div>
-          {% endif %}
-
-          <div class="field {% if comment_form.content.errors and not parent_id_with_error %}error{% endif %}">
+          <div class="field {% if comment_form.content.errors %}error{% endif %}">
             <div id="editor—wrapper">
               <div id="toolbar-container"><!-- toolbar --></div>
               <div id="editor-container" ><!-- editor --></div>
             </div>
+            <textarea id="editor-content" name="content" style="display:none;">{% if not comment_form.content.errors %}{{ comment_form.content.value|default:'' }}{% endif %}</textarea>
+            {% for error in comment_form.content.errors %}
+              <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+            {% endfor %}
           </div>
-          <textarea id="editor-content" name="content" style="display:none;">{% if not parent_id_with_error %}{{ comment_form.content.value|default:'' }}{% endif %}</textarea><!--test-->
           <div class="ui right aligned container">
             <button class="ui m-primary submit labeled icon button" type="submit">
               <i class="m-primary icon edit"></i> Send
@@ -119,12 +114,14 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
 <script type="text/javascript" id="MathJax-script" defer src="{% static 'mathjax/es5/tex-svg.js' %}"></script>
-<script src="{% static 'js/comment.js' %}"></script>
 {% if user.is_authenticated %}
-  <script src="{% static 'js/post.js' %}"></script>
+  <script src="{% static 'js/comment_form.js' %}"></script>
+  <script src="{% static 'js/comment.js' %}"></script>
 {% endif %}
 {% endblock %}

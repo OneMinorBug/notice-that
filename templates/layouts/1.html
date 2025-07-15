@@ -1,13 +1,47 @@
 {% extends 'base.html' %}
 
+{% block head %}
+{{ block.super }}
+<script>
+    $(document)
+      .ready(function() {
+  
+        // fix menu when passed
+        $('.masthead')
+          .visibility({
+            once: false,
+            onBottomPassed: function() {
+              $('.fixed.menu').transition('fade in');
+            },
+            onBottomPassedReverse: function() {
+              $('.fixed.menu').transition('fade out');
+            }
+          })
+        ;
+  
+        // create sidebar and attach to menu open
+        $('.ui.sidebar')
+          .sidebar('attach events', '.toc.item')
+        ;
+  
+      })
+    ;
+</script>
+{% endblock %}
+
 {% block layout %}
 
-    {% include 'components/header_fixed_menu.html' %}
+    {% include 'components/sidebar.html' %}    
 
-    {% block content %}
-    {% endblock %}
+    <div class="pusher">
 
-    <br>
-    {% include 'components/footer.html' %}
+        {% include 'components/header_fixed_menu.html' %}
+
+        {% block content %}{% endblock %}
+
+        <br>
+        {% include 'components/footer.html' %}
+
+    </div>
 
 {% endblock %}
