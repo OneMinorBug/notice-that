@@ -192,5 +192,7 @@ ADMINS = [
     ('Zhibo', 'zhibosheng12@gmail.com'),
 ]
 
+LOG_DIR = BASE_DIR
+
 MATHJAX_LOCAL_PATH = 'static/mathjax/'
 MATHJAX_CONFIG_FILE = "TeX-AMS-MML_HTMLorMML"
