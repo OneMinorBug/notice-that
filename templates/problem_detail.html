@@ -52,9 +52,11 @@
         <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
       {% endif %}
     </div>
-    <div class="ui attached segment m-padded-tb-medium m-padded-lr-big">
-      <div class="m-medium-text" id="problem-content-segment">{{ problem.content|safe }}</div>
-    </div>
+    {% if problem.content|striptags %}
+      <div class="ui attached segment m-padded-tb-medium m-padded-lr-big">
+        <div class="m-medium-text" id="problem-content-segment">{{ problem.content|safe }}</div>
+      </div>
+    {% endif %}
     <div class="ui bottom attached segment m-padded-tb-medium m-padded-lr-big">
       {% if user.is_authenticated %}
         <form class="ui reply form {% if comment_form.content.errors %}error{% endif %}" method="post" id="comment-form" novalidate>

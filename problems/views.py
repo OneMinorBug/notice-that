@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -10,8 +11,6 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
 from .models import Problem, Comment
 from .forms import ProblemForm, CommentForm
@@ -72,6 +71,7 @@ def problem_detail(request, pk):
             comment_to_pin = get_object_or_404(Comment, id=request.POST['pin_comment_id'], problem=problem)
             # This pins the comment and unpin the previously pinned comment if it exists
             problem.solution_comment = comment_to_pin
+            problem.solution_post_at = comment_to_pin.created_at
             problem.save()
             messages.success(request, 'Solution has been pinned.')
             return redirect('problems:problem_detail', pk=problem.id)
@@ -106,15 +106,19 @@ def problem_detail(request, pk):
         print("Parent ID with error:", parent_id_with_error)
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
-    if show_solution:
-        pinned_comment = problem.solution_comment if problem.solution_comment else None
-        total_visible_comments = problem.comments.count()
-        visible_top_level_comments = problem.comments.filter(parent=None).exclude(id=problem.solution_comment.id if problem.solution_comment else None) # Exclude pinned comment only if it exists
-    else:
-        pinned_comment = None
-        visible_comments = problem.comments.exclude(id__in=get_comment_tree_ids(problem.solution_comment))
-        total_visible_comments = visible_comments.count()
-        visible_top_level_comments = visible_comments.filter(parent=None)
+    pinned_comment = problem.solution_comment if show_solution else None
+    comments_qs = problem.comments.all()
+
+    if not show_solution and problem.solution_comment:
+        solution_thread_ids = get_comment_tree_ids(problem.solution_comment)
+        comments_qs = comments_qs.exclude(id__in=solution_thread_ids)
+
+    total_visible_comments = comments_qs.count()
+    # Exclude the main pinned comment from the main list if it exists
+    if problem.solution_comment:
+        comments_qs = comments_qs.exclude(pk=problem.solution_comment.pk)
+
+    visible_top_level_comments = comments_qs.filter(parent=None)
     user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
 
     return render(request, 'problem_detail.html', {
@@ -139,9 +143,9 @@ def post_problem(request):
         if problem_form.is_valid() and solution_form.is_valid():
             with transaction.atomic():
                 problem = problem_form.save(commit=False)
-                if not problem_form.cleaned_data.get('scheduled_post_at'):
+                if not problem.scheduled_post_at:
                     problem.scheduled_post_at = timezone.now()
-                if not problem_form.cleaned_data.get('solution_post_at'):
+                if not problem.solution_post_at:
                     problem.solution_post_at = problem.scheduled_post_at
                 problem.save()
 
@@ -188,10 +192,14 @@ def upload_image(request):
 
 @staff_member_required
 def view_log_file(request, filename):
-    file_path = settings.BASE_DIR / filename
-    if file_path.exists():
-        with open(file_path, 'r') as file:
-            response = HttpResponse(file.read(), content_type='text/plain')
-            return response
-    else:
-        raise Http404("Log file does not exist")
+    # Sanitize the filename
+    safe_filename = os.path.basename(filename) # This strips any directory information
+    file_path = settings.LOG_DIR / safe_filename
+
+    # Check that the final path is still inside your log directory (extra safety)
+    if not file_path.is_file() or not str(file_path).startswith(str(settings.LOG_DIR)):
+        raise Http404("Log file does not exist or access is denied")
+
+    with open(file_path, 'r') as file:
+        response = HttpResponse(file.read(), content_type='text/plain')
+        return response
