@@ -26,8 +26,17 @@ class Problem(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
+        # Pop our custom flag before calling the parent save.
+        is_sync_update = kwargs.pop('_from_sync', False)
         super().save(*args, **kwargs)
-        
+
+        if not is_sync_update:
+            if self.solution_comment:
+                if self.solution_comment.created_at != self.solution_post_at:
+                    self.solution_comment.created_at = self.solution_post_at or timezone.now()
+                     # Save the comment, passing the flag to prevent an infinite loop.
+                    self.solution_comment.save(_from_sync=True, update_fields=['created_at'])
+
     def get_absolute_url(self):
         return reverse("problems:problem_detail", kwargs={"pk": self.id})
     
@@ -41,3 +50,18 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.account.username} on {self.problem.title}'
+    
+    def save(self, *args, **kwargs):
+        # We'll add a custom, internal flag to prevent infinite loops. If this save was triggered by the Problem model, we don't want to sync back.
+        is_sync_update = kwargs.pop('_from_sync', False)
+        super().save(*args, **kwargs)
+
+        if not is_sync_update:
+            try:
+                problem = self.problem_as_solution
+                if problem.solution_post_at != self.created_at:
+                    problem.solution_post_at = self.created_at
+                    # Save the problem, passing the flag to prevent it from syncing back to us.
+                    problem.save(_from_sync=True, update_fields=['solution_post_at'])
+            except Problem.DoesNotExist:
+                pass
