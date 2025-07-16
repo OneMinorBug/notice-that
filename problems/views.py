@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_GET
-from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
@@ -177,7 +176,7 @@ def search(request):
     problems = Problem.objects.filter(Q(title__icontains=q)|Q(content__icontains=q), scheduled_post_at__lte=timezone.now())
     return render(request, 'archives.html', {'problems': problems})
 
-@csrf_exempt
+@login_required
 def upload_image(request):
     if request.method == 'POST':
         image = request.FILES.get('file')

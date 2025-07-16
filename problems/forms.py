@@ -1,21 +1,20 @@
 from django import forms
 from .models import Problem, Comment
-from django.utils.html import strip_tags
+from bs4 import BeautifulSoup
 
-def is_empty_content(content):
-    if not content:
+def is_content_effectively_empty(html_content):
+    if not html_content:
         return True
-    # Strip HTML tags
-    text_only = strip_tags(content)
-    # Replace &nbsp; with regular space and strip
-    cleaned = text_only.replace('&nbsp;', ' ').strip()
-    return not cleaned or cleaned.isspace()
+
+    soup = BeautifulSoup(html_content, 'html.parser')
+    # Check for significant non-text tags.
+    if soup.find(['img', 'iframe', 'video']):
+        return False
+    
+    text_content = soup.get_text(strip=True)
+    return not text_content
 
 class ProblemForm(forms.ModelForm):
-    created_at = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
-    scheduled_post_at = forms.DateTimeField(required=False, widget=forms.TextInput(attrs={'type': 'datetime-local'}))
-    solution_post_at = forms.DateTimeField(required=False, widget=forms.TextInput(attrs={'type': 'datetime-local'}))
-    
     class Meta:
         model = Problem
         fields = ['title', 'content', 'image', 'scheduled_post_at', 'solution_post_at']
@@ -46,7 +45,7 @@ class CommentForm(forms.ModelForm):
     # Custom validation to prevent effectively empty comments, but only if there's content to check.
     def clean_content(self):
         content = self.cleaned_data.get('content')
-        if is_empty_content(content):
+        if is_content_effectively_empty(content):
             if self.fields['content'].required:
                 raise forms.ValidationError("This field cannot be empty.")
             else:
