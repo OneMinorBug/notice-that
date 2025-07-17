@@ -1,4 +1,4 @@
-{% extends 'layouts/1.html' %}
+{% extends 'layouts/2.html' %}
 {% load i18n %}
 
 {% block head %}
@@ -14,13 +14,12 @@
 {% block title %}{% trans "Log In" %} -{% endblock %}
 
 {% block content %}
-<div class="ui container">
-  <div class="ui middle aligned centered grid m-padded-tb-medium">
+  <div class="ui middle aligned centered grid">
     <div class="column">
       {% include 'account/partials/messages.html' %}
 
-      <h2>{% trans "Log In" %}</h2>
-      <form method="post" action="{% url 'account_signup' %}" class="ui large form {% if form.errors %}error{% endif %}" id="signup_form" novalidate>
+      <h1>{% trans "Log In" %}</h1>
+      <form method="post" action="{% url 'account_login' %}" class="ui large form {% if form.errors %}error{% endif %}" id="login_form" novalidate>
         {% csrf_token %}
         {% if form.non_field_errors %}
           <div class="ui error message">
@@ -30,7 +29,7 @@
 
         <!-- 'login' Field (Username or Email) -->
         <div class="field {% if form.login.errors %}error{% endif %}">
-          <label for="{{ form.login.id_for_label }}">{% trans "Username or E-mail" %}</label>
+          <label for="{{ form.login.id_for_label }}">{% trans "Username or Email" %}</label>
           {{ form.login }}
           {% for error in form.login.errors %}
             <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
@@ -48,12 +47,12 @@
 
         <button type="submit" class="ui m-primary button">{% trans "Log In" %}</button>
         <br>
+        <br>
         <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         <p>Don't have an account? <a href="{% url 'account_signup' %}">{% trans "Sign up here" %}</a></p>
       </form>
     </div>
   </div>
-</div>
 {% endblock %}
 
 {% block scripts %}

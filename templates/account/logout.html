@@ -1,0 +1,37 @@
+{% extends 'layouts/2.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Sign Out" %} -{% endblock %}
+
+{% block head %}
+  {{ block.super }}
+  <style type="text/css">
+    .grid .column { 
+			max-width: 600px; 
+    } 
+    body .grid {
+			height: 100vh;
+    }
+	</style>
+{% endblock %}
+
+{% block content %}
+<div class="ui middle aligned centered grid">
+	<div class="column">
+		<h1>{% trans "Sign Out" %}</h1>
+		<div class="ui center aligned basic segment">
+
+			<p style="font-size: 1.2em; margin-bottom: 2em;">
+				{% trans 'Are you sure you want to sign out?' %}
+			</p>
+
+			<form method="post" action="{% url 'account_logout' %}">
+				{% csrf_token %}
+				<a href="{% url 'problems:home' %}" class="ui large button">{% trans "Cancel" %}</a>
+				<button type="submit" class="ui large red button">{% trans 'Sign Out' %}</button>
+			</form>
+
+		</div>
+	</div>
+</div>
+{% endblock %}
