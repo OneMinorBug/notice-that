@@ -1,4 +1,5 @@
 {% extends 'layouts/1.html' %}
+{% load i18n %}
 
 {% block head %}
   {{ block.super }}
@@ -10,20 +11,16 @@
   </style>
 {% endblock %}
 
-{% block title %}Log In -{% endblock %}
+{% block title %}{% trans "Log In" %} -{% endblock %}
 
 {% block content %}
 <div class="ui container">
   <div class="ui middle aligned centered grid m-padded-tb-medium">
     <div class="column">
-      {% for message in messages %}
-        <div class="ui message {{ message.tags }}">
-          {{ message }}
-        </div>
-      {% endfor %}
+      {% include 'account/partials/messages.html' %}
 
-      <h2>Login</h2>
-      <form method="post" class="ui large form {% if form.errors or form.non_field_errors %}error{% endif %}" novalidate>
+      <h2>{% trans "Log In" %}</h2>
+      <form method="post" action="{% url 'account_signup' %}" class="ui large form {% if form.errors %}error{% endif %}" id="signup_form" novalidate>
         {% csrf_token %}
         {% if form.non_field_errors %}
           <div class="ui error message">
@@ -31,24 +28,28 @@
           </div>
         {% endif %}
 
-        <!-- Username Field  -->
-        <div class="field {% if form.username.errors %}error{% endif %}">
-          <label for="{{ form.username.id_for_label }}">Username</label>
-          {{ form.username }}
-          {% if form.username.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ form.username.errors.0 }}</div>
-          {% endif %}
+        <!-- 'login' Field (Username or Email) -->
+        <div class="field {% if form.login.errors %}error{% endif %}">
+          <label for="{{ form.login.id_for_label }}">{% trans "Username or E-mail" %}</label>
+          {{ form.login }}
+          {% for error in form.login.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+          {% endfor %}
         </div>
 
         <!-- Password Field -->
         <div class="field {% if form.password.errors %}error{% endif %}">
-          <label for="{{ form.password.id_for_label }}">Password</label>
+          <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
           {{ form.password }}
+          {% for error in form.password.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+          {% endfor %}
         </div>
-        
-        <button type="submit" class="ui m-primary button">Login</button>
+
+        <button type="submit" class="ui m-primary button">{% trans "Log In" %}</button>
         <br>
-        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+        <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+        <p>Don't have an account? <a href="{% url 'account_signup' %}">{% trans "Sign up here" %}</a></p>
       </form>
     </div>
   </div>
@@ -56,22 +57,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-$(document).ready(function() {
-  $('.ui.form').form({
-    on: 'blur',
-    inline: true,
-    fields: {
-      username: {
-        identifier: 'username',
-        rules: [{ type: 'empty', prompt: 'Please enter a username' }]
-      },
-      password: {
-        identifier: 'password',
-        rules: [{ type: 'empty', prompt: 'Please enter a password' }]
-      }
-    }
-  });
-});
-</script>
+  <script src="{% static 'js/login.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'layouts/1.html' %}
+
+{% block title %}{% trans "Sign Up" %} -{% endblock %}
+
+{% block head %}
+  {{ block.super }}
+  <meta name="title" content="Sign up | NoticeThat" />
+  <style type="text/css">
+    .grid .column {
+      max-width: 600px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <div class="ui middle aligned centered grid m-padded-tb-medium">
+    <div class="column">
+      {% include 'account/partials/messages.html' %}
+
+      <h2>{% trans "Sign Up" %}</h2>
+      <p>{% blocktrans %}Welcome to NoticeThat! Signing up is easy. It takes less than 60 seconds. <br>After signing up, we will send you a verification email.{% endblocktrans %}</p>
+      <form method="post" action="{% url 'account_signup' %}" class="ui large form {% if form.errors or form.non_field_errors %}error{% endif %}" id="registration-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="ui error message">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <!-- Username Field -->
+        <div class="field {% if form.username.errors %}error{% endif %}">
+          <label for="{{ form.username.id_for_label }}">{% trans "Username" %}</label>
+          {{ form.username }}
+          {% for error in form.username.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Email Field -->
+        <div class="field {% if form.email.errors %}error{% endif %}">
+          <label for="{{ form.email.id_for_label }}">{% trans "Email" %}</label>
+          {{ form.email }}
+          {% for error in form.email.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+          {% endfor %}
+        </div>
+     
+        <!-- Password Field -->
+        <div class="field {% if form.password.errors %}error{% endif %}">
+          <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+          {{ form.password }}
+          {% for error in form.password.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+          {% endfor %}
+        </div>
+        
+        <!-- Confirm Password Field -->
+        <div class="field {% if form.password2.errors %}error{% endif %}">
+          <label for="{{ form.password2.id_for_label }}">{% trans "Confirm Password" %}</label>
+          {{ form.password2 }}
+          {% for error in form.password2.errors %}
+            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <button type="submit" class="ui m-primary button">{% trans "Sign Up" %}</button>
+        <br>
+        <p>Already have an account? <a href="{% url 'account_login' %}">{% trans "Log In here" %}</a></p>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
