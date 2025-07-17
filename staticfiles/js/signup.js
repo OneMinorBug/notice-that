@@ -15,8 +15,8 @@ $(document).ready(function() {
                     {type: 'email',prompt: 'Please enter a valid email address'}
                 ]
             },
-            password: {
-                identifier: 'password',
+            password1: {
+                identifier: 'password1',
                 rules: [
                     {type: 'notEmpty', prompt: 'Please enter a password'},
                     {type: 'minLength[8]', prompt: 'Your password must be at least 8 characters long'}
