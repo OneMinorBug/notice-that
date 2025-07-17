@@ -28,9 +28,9 @@
 						<img class="ui avatar image" src="{{ user.profile.profile_picture.url }}" onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
 					</a>
 					&nbsp;&nbsp;&nbsp;
-					<a class="ui inverted button" href="{% url 'accounts:logout' %}">Logout</a>
+					<a class="ui inverted button" href="{% url 'account_logout' %}">Logout</a>
 				{% else %}
-					<a class="ui inverted button" href="{% url 'accounts:login' %}">Login/Sign Up</a>
+					<a class="ui inverted button" href="{% url 'account_login' %}">Login/Sign Up</a>
 				{% endif %}
 			</div>
 		</div>
