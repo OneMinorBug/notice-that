@@ -119,6 +119,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ block.super }}
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
 <script type="text/javascript" id="MathJax-script" defer src="{% static 'mathjax/es5/tex-svg.js' %}"></script>

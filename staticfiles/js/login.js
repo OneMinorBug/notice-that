@@ -1,6 +1,6 @@
 $(document).ready(function() {
   // Fomantic UI form validation
-  $('.ui.form').form({
+  $('#login_form').form({
     on: 'blur',
     inline: true,
     fields: {
