@@ -1,12 +1,13 @@
-{% extends 'layouts/2.html' %}
+{% extends 'layouts/1.html' %}
 {% load i18n %}
 
 {% block head %}
   {{ block.super }}
   <meta name="title" content="Log in | NoticeThat">
   <style type="text/css">
-    .grid .column {
-      max-width: 600px;
+    .grid .m-form{
+      max-width: 450px;
+      margin: 0 auto;
     }
   </style>
 {% endblock %}
@@ -14,47 +15,61 @@
 {% block title %}{% trans "Log In" %} -{% endblock %}
 
 {% block content %}
-  <div class="ui middle aligned centered grid">
-    <div class="column">
+<div class="ui container m-padded-tb-big">
+  <div class="ui grid">
+    <div class="column m-form">
       {% include 'account/partials/messages.html' %}
 
-      <h1>{% trans "Log In" %}</h1>
-      <form method="post" action="{% url 'account_login' %}" class="ui large form {% if form.errors %}error{% endif %}" id="login_form" novalidate>
-        {% csrf_token %}
-        {% if form.non_field_errors %}
-          <div class="ui error message">
-            {{ form.non_field_errors }}
-          </div>
-        {% endif %}
-
-        <!-- 'login' Field (Username or Email) -->
-        <div class="field {% if form.login.errors %}error{% endif %}">
-          <label for="{{ form.login.id_for_label }}">{% trans "Username or Email" %}</label>
-          {{ form.login }}
-          {% for error in form.login.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
-          {% endfor %}
+      <div class="ui segment">
+        <div style="margin-bottom: 2em;">
+          <img src="{% static 'images/favicon.png' %}" class="ui centered image" style="width: 90px;">
+          <h1 class="ui huge centered header" style="margin-top: 0.5em">
+             {% trans "Login to" %} NoticeThat
+          </h1>
         </div>
 
-        <!-- Password Field -->
-        <div class="field {% if form.password.errors %}error{% endif %}">
-          <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
-          {{ form.password }}
-          {% for error in form.password.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
-          {% endfor %}
-        </div>
+        <form method="post" action="{% url 'account_login' %}" class="ui large form {% if form.errors %}error{% endif %}" id="login_form" novalidate>
+          {% csrf_token %}
+            {% for error in form.non_field_errors %}
+              <div class="ui error message">
+                {{ error }}
+              </div>
+            {% endfor %}
 
-        <button type="submit" class="ui m-primary button">{% trans "Log In" %}</button>
-        <br>
-        <br>
-        <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-        <p>Don't have an account? <a href="{% url 'account_signup' %}">{% trans "Sign up here" %}</a></p>
-      </form>
+            <!-- 'login' Field (Username or Email) -->
+            <div class="field {% if form.login.errors %}error{% endif %}">
+              <div class="ui left icon input">
+                <i class="user icon"></i>
+                {{ form.login }}
+              </div>
+              {% for error in form.login.errors %}
+                <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Password Field -->
+            <div class="field {% if form.password.errors %}error{% endif %}">
+              <div class="ui left icon input">
+                <i class="lock icon"></i>
+                {{ form.password }}
+              </div>
+              {% for error in form.password.errors %}
+                <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <button type="submit" class="ui fluid large m-primary button">{% trans "Login" %}</button>
+            <div class="ui divider"></div>
+            <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <p>Don't have an account? <a href="{% url 'account_signup' %}">{% trans "Sign up here" %}</a></p>
+          </form>
+        </div>
     </div>
   </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-  <script src="{% static 'js/login.js' %}"></script>
+{{ block.super }}
+<script src="{% static 'js/login.js' %}"></script>
 {% endblock %}
