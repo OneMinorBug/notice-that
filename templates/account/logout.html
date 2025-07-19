@@ -1,37 +1,31 @@
-{% extends 'layouts/2.html' %}
+{% extends 'allauth/layouts/base.html' %}
 {% load i18n %}
 
 {% block title %}{% trans "Sign Out" %} -{% endblock %}
 
 {% block head %}
-  {{ block.super }}
-  <meta name="title" content="Sign out | NoticeThat">
-  <style type="text/css">
-    .grid .m-form { max-width: 500px; margin: 0 auto; }
-    .m-mb2 { margin-bottom: 2em; }
-    .m-fs18 { font-size: 18px; }
-  </style>
+	{{ block.super }}
+	<meta name="title" content="Sign out | NoticeThat">
+	<style type="text/css">
+		.m-mb2 { margin-bottom: 2em; }
+		.m-fs18 { font-size: 18px; }
+	</style>
 {% endblock %}
 
 {% block content %}
-<div class="ui container m-padded-tb-big">
-	<div class="ui grid">
-		<div class="column m-form">
-			<h1>{% trans "Sign Out" %}</h1>
-			<div class="ui center aligned basic segment">
+	<h1>{% trans "Sign Out" %}</h1>
+	<div class="ui center aligned basic segment">
 
-				<p class="m-mb2 m-fs18">
-					{% trans 'Are you sure you want to sign out?' %}
-				</p>
+		<p class="m-mb2 m-fs18">
+			{% trans 'Are you sure you want to sign out?' %}
+		</p>
 
-				<form method="post" action="{% url 'account_logout' %}">
-					{% csrf_token %}
-					<a href="{% url 'problems:home' %}" class="ui large button">{% trans "Cancel" %}</a>
-					<button type="submit" class="ui large negative button">{% trans 'Sign Out' %}</button>
-				</form>
-
-			</div>
-		</div>
+		<form method="post" action="{% url 'account_logout' %}">
+			{% csrf_token %}
+			<a href="{% url 'problems:home' %}" class="ui large button">{% trans "Cancel" %}</a>
+			<button type="submit" class="ui large negative button">{% trans 'Sign Out' %}</button>
+		</form>
 	</div>
-</div>
 {% endblock %}
+
+{% block extra_body %}{% endblock %}
