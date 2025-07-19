@@ -5,32 +5,32 @@
 
 {% block head %}
   {{ block.super }}
+  <meta name="title" content="Sign out | NoticeThat">
   <style type="text/css">
-    .grid .column { 
-			max-width: 600px; 
-    } 
-    body .grid {
-			height: 100vh;
-    }
-	</style>
+    .grid .m-form { max-width: 500px; margin: 0 auto; }
+    .m-mb2 { margin-bottom: 2em; }
+    .m-fs18 { font-size: 18px; }
+  </style>
 {% endblock %}
 
 {% block content %}
-<div class="ui middle aligned centered grid">
-	<div class="column">
-		<h1>{% trans "Sign Out" %}</h1>
-		<div class="ui center aligned basic segment">
+<div class="ui container m-padded-tb-big">
+	<div class="ui grid">
+		<div class="column m-form">
+			<h1>{% trans "Sign Out" %}</h1>
+			<div class="ui center aligned basic segment">
 
-			<p style="font-size: 1.2em; margin-bottom: 2em;">
-				{% trans 'Are you sure you want to sign out?' %}
-			</p>
+				<p class="m-mb2 m-fs18">
+					{% trans 'Are you sure you want to sign out?' %}
+				</p>
 
-			<form method="post" action="{% url 'account_logout' %}">
-				{% csrf_token %}
-				<a href="{% url 'problems:home' %}" class="ui large button">{% trans "Cancel" %}</a>
-				<button type="submit" class="ui large red button">{% trans 'Sign Out' %}</button>
-			</form>
+				<form method="post" action="{% url 'account_logout' %}">
+					{% csrf_token %}
+					<a href="{% url 'problems:home' %}" class="ui large button">{% trans "Cancel" %}</a>
+					<button type="submit" class="ui large negative button">{% trans 'Sign Out' %}</button>
+				</form>
 
+			</div>
 		</div>
 	</div>
 </div>
