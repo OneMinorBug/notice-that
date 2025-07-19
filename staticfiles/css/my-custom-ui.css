@@ -76,10 +76,6 @@ mjx-container::-webkit-scrollbar-thumb:hover {
   padding-top: 0.5em !important;
   padding-bottom: 0.5em !important;
 }
-.m-padded-tb-mini {
-  padding-top: 0.7em !important;
-  padding-bottom: 0.7em !important;
-}
 .m-padded-tb-small {
   padding-top: 1em !important;
   padding-bottom: 1em !important;
@@ -96,7 +92,7 @@ mjx-container::-webkit-scrollbar-thumb:hover {
   padding-top: 10em !important;
   padding-bottom: 10em !important;
 }
-.m-padded-lr-small {
+.m-padded-lr-medium {
   padding-left: 2em !important;
   padding-right: 2em !important;
 }
