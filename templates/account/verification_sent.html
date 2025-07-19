@@ -1,4 +1,4 @@
-{% extends 'layouts/1.html' %}
+{% extends 'layouts/2.html' %}
 {% load i18n %}
 
 {% block head %}
@@ -22,7 +22,8 @@
         <div class="header">
           {% trans "Verification Email Sent" %}
         </div>
-        <p>{% blocktrans %}We have sent a confirmation email to you. Please check your inbox and click the link to verify your email address. If you do not see the verification email in your main inbox, check your spam folder.{% endblocktrans %}</p>
+        <p>{% blocktrans %}We have sent a confirmation email to you. Please check your inbox and click the link to verify your email address. 
+          If you do not see the verification email in your main inbox, check your spam folder.{% endblocktrans %}</p>
       </div>
       
       <a href="{% url 'problems:home' %}" class="ui fluid large m-primary button">{% trans "Back to Home" %}</a>
