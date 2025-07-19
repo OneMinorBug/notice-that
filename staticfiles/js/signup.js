@@ -1,6 +1,6 @@
 $(document).ready(function() {
     // Fomantic UI form validation
-    $('#signup_form').form({
+    $('.ui.large.form').form({
         on: 'blur', // Validate fields when the user moves away from them
         inline: true, // Display error messages inline
         fields: {
@@ -26,7 +26,7 @@ $(document).ready(function() {
                 identifier: 'password2',
                 rules: [
                     {type: 'notEmpty', prompt: 'Please confirm your password'},
-                    {type: 'match[password]', prompt: 'Passwords do not match'}
+                    {type: 'match[password1]', prompt: 'Passwords do not match'}
                 ]
             }
         }
