@@ -1,12 +1,12 @@
 {% extends 'layouts/1.html' %}
 
 {% block head %}
-  {{ block.super }}
-  <meta name="title" content="NoticeThat">
+	{{ block.super }}
+	<meta name="title" content="NoticeThat">
 {% endblock %}
 
 {% block content %}
-<div class="ui grid m-white m-padded-tb-medium">
+<div class="ui grid m-mtb-problems">
 	<div class="ui container">
 		{% for message in messages %}
 			<div class="ui message {{ message.tags }}">
@@ -31,7 +31,7 @@
 						</div>
 					</a>
 				</div>
-				{% endfor %}
+			{% endfor %}
 		</div>
 		<div class="ui two column tablet only grid">
 			{% for problem in problems reversed %}
