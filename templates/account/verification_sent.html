@@ -1,0 +1,28 @@
+{% extends 'allauth/layouts/base.html' %}
+{% load i18n %}
+
+{% block head %}
+  {{ block.super }}
+  <meta name="title" content="Verification Sent | NoticeThat">
+  <style type="text/css">
+    .ui.message.m-mtb2 { margin: 2em auto; }
+  </style>
+{% endblock %}
+
+{% block title %}{% trans "Verification Sent" %} -{% endblock %}
+
+{% block content %}
+  <h1>{% trans "Check Your Inbox" %}</h1>
+
+  <div class="ui large info message m-mtb2">
+    <div class="header">
+      {% trans "Verification Email Sent" %}
+    </div>
+    <p>{% blocktrans %}We have sent a confirmation email to you. Please check your inbox and click the link to verify your email address. 
+      If you do not see the verification email in your main inbox, check your spam folder.{% endblocktrans %}</p>
+  </div>
+  
+  <a href="{% url 'problems:home' %}" class="ui fluid large m-primary button">{% trans "Back to Home" %}</a>
+{% endblock %}
+
+{% block extra_body %}{% endblock %}
