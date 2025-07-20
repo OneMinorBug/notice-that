@@ -13,6 +13,7 @@
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
 	<style>
+    .m-maxw { max-width: none !important; }
 		#editor—wrapper {
 			border: 1px solid #ccc;
 			z-index: 100; /* If you need */
@@ -34,7 +35,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="ui vertical grid m-padded-tb-medium">
+<div class="ui vertical grid m-mtb-medium">
   <div class="ui container">
     {% if problem.scheduled_post_at and problem.scheduled_post_at > now %}
       <div class="ui yellow message">
@@ -45,7 +46,7 @@
       <h2 class="m-mobile-title">{{ problem.title }}</h2>
       <div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
     </div>
-    <div class="ui attached segment m-padded-lr-large" id="problem-img-segment">
+    <div class="ui attached segment m-pd-lr" id="problem-img-segment">
       {% if problem.image %}
         <img src="{{ problem.image.url }}" class="ui rounded fluid image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
       {% else %}
@@ -53,11 +54,11 @@
       {% endif %}
     </div>
     {% if problem.content|striptags %}
-      <div class="ui attached segment m-padded-tb-medium m-padded-lr-big">
+      <div class="ui attached segment m-pd-tb-medium m-pd-lr">
         <div class="m-medium-text" id="problem-content-segment">{{ problem.content|safe }}</div>
       </div>
     {% endif %}
-    <div class="ui bottom attached segment m-padded-tb-medium m-padded-lr-big">
+    <div class="ui bottom attached segment m-pd-tb-medium m-pd-lr">
       {% if user.is_authenticated %}
         <form class="ui reply form {% if comment_form.content.errors %}error{% endif %}" method="post" id="comment-form" novalidate>
           {% csrf_token %}
@@ -79,7 +80,7 @@
         </form>
       {% else %}
         <div class="ui icon warning message">
-          <div class="content m-padded-tb-tiny">
+          <div class="content m-pd-tb-tiny">
             <div class="header">Please log in to submit your response.</div>
             <p><a href="{% url 'account_login' %}">Log in</a> or <a href="{% url 'account_signup' %}">sign up</a> to participate in the discussion.</p>
           </div>
@@ -88,7 +89,7 @@
       
       {% if user_has_commented or request.user.is_staff %}
         <h3 class="ui dividing header">Discussion ({{ total_comments }})</h3>
-        <div class="ui comments m-w">
+        <div class="ui comments m-maxw">
           {% if pinned_comment and show_solution %}
             {% with comment=pinned_comment comment_id_str=pinned_comment.id|stringformat:"s" is_pinned=True %}
               {% include "components/comment.html" %}
@@ -104,7 +105,7 @@
 
       {% else %}
         <div class="ui icon info message">
-					<div class="content m-padded-tb-tiny">
+					<div class="content m-pd-tb-tiny">
 						<div class="header">
 							Can't view the discussion?
             </div>
@@ -119,12 +120,12 @@
 {% endblock %}
 
 {% block scripts %}
-{{ block.super }}
-<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-<script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
-<script type="text/javascript" id="MathJax-script" defer src="{% static 'mathjax/es5/tex-svg.js' %}"></script>
-{% if user.is_authenticated %}
-  <script src="{% static 'js/comment_form.js' %}"></script>
-  <script src="{% static 'js/comment.js' %}"></script>
-{% endif %}
+  {{ block.super }}
+  <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+  <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
+  <script type="text/javascript" id="MathJax-script" defer src="{% static 'mathjax/es5/tex-svg.js' %}"></script>
+  {% if user.is_authenticated %}
+    <script src="{% static 'js/comment_form.js' %}"></script>
+    <script src="{% static 'js/comment.js' %}"></script>
+  {% endif %}
 {% endblock %}

@@ -1,10 +1,10 @@
-<header class="ui inverted vertical segment m-padded-tb0">
-	<nav class="ui container m-padded-tb-tiny">
+<header class="ui inverted vertical segment m-pd-tb0">
+	<nav class="ui container m-pd-tb-tiny">
 		<div class="ui large secondary inverted menu">
-			<a class="toc item m-pd-small">
+			<a class="toc item">
 				<i class="sidebar icon"></i>
 			</a>
-			<a class="item m-pd-small" href="{% url 'problems:home' %}">
+			<a class="item" href="{% url 'problems:home' %}">
 				<img class="ui small image" id="logo" src={% static 'images/logo.png' %} alt="NoticeThat">
 			</a>
 			<a class="item" href="{% url 'problems:home' %}"><i class="home icon"></i>Home</a>
@@ -30,8 +30,8 @@
 					&nbsp;&nbsp;&nbsp;
 					<a class="ui inverted button" href="{% url 'account_logout' %}">Log Out</a>
 				{% else %}
-					<a class="ui inverted button m-padded-lr-mini" href="{% url 'account_login' %}">Log In</a>
-					<a class="ui secondary button m-padded-lr-mini" href="{% url 'account_signup' %}">Sign Up</a>
+					<a class="ui inverted button" href="{% url 'account_login' %}">Log In</a>
+					<a class="ui secondary button" href="{% url 'account_signup' %}">Sign Up</a>
 				{% endif %}
 			</div>
 		</div>

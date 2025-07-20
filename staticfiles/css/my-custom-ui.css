@@ -12,7 +12,6 @@
 }
 .m-text {
   font-size: large;
-  font-weight: 400;
   line-height: 1.8;
 }
 .m-medium-text {
@@ -72,41 +71,40 @@ mjx-container::-webkit-scrollbar-thumb {
 mjx-container::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
-.m-padded-tb0 {
+.m-pd-tb0 {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
-.m-padded-tb-tiny {
+.m-pd-tb-tiny {
   padding-top: 0.5em !important;
   padding-bottom: 0.5em !important;
 }
-.m-padded-tb-small {
+.m-pd-tb-small {
   padding-top: 1em !important;
   padding-bottom: 1em !important;
 }
-.m-padded-tb-medium {
+.m-pd-tb-medium {
   padding-top: 3em !important;
   padding-bottom: 3em !important;
 }
-.m-padded-tb-big {
-  padding-top: 5em !important;
-  padding-bottom: 5em !important;
-}
-.m-padded-tb-large {
-  padding-top: 10em !important;
-  padding-bottom: 10em !important;
-}
-.m-padded-lr-medium {
-  padding-left: 2em !important;
-  padding-right: 2em !important;
-}
-.m-padded-lr-big {
+.m-pd-lr {
   padding-left: 5em !important;
   padding-right: 5em !important;
 }
-.m-padded-lr-large {
-  padding-left: 10em !important;
-  padding-right: 10em !important;
+.m-mtb-problems {
+  margin-top: 2em !important;
+  margin-bottom: 6em !important;
+}
+.m-mtb-problems h1 {
+  margin-bottom: 1em;
+}
+.m-mtb-medium {
+  margin-top: 3em !important;
+  margin-bottom: 3em !important;
+}
+.m-mtb-big {
+  margin-top: 5em !important;
+  margin-bottom: 5em !important;
 }
 .m-end {
   align-self: end;
@@ -136,13 +134,14 @@ nav #logo {
 }
 .masthead h1.ui.header {
   margin-top: 3em;
-  margin-bottom: 0em;
   font-size: 4em;
   font-weight: normal;
 }
-.masthead h2 {
-  font-size: 1.7em;
-  font-weight: normal;
+.masthead h3 {
+  margin: 2em 0;
+}
+.masthead a {
+  margin-bottom: 2.5em;
 }
 .ui.m-bprimary.label,
 .ui.red.labels .label {
@@ -163,37 +162,14 @@ nav #logo {
   line-height: 2;
   font-size: 1.2rem;
 }
-.ui.vertical.segment.m-white {
-  background-color: #fff;
-}
 .ui.vertical.stripe {
-  padding: 8em 0em;
+  padding: 3em 0em;
 }
 .ui.vertical.stripe h3 {
   font-size: 2em;
 }
-.ui.vertical.stripe .button + h3,
-.ui.vertical.stripe p + h3 {
-  margin-top: 3em;
-}
-.ui.vertical.stripe .floated.image {
-  clear: both;
-}
 .ui.vertical.stripe p {
   font-size: 1.33em;
-}
-.ui.vertical.stripe .horizontal.divider {
-  margin: 3em 0em;
-}
-.quote.stripe.segment {
-  padding: 0em;
-}
-.quote.stripe.segment .grid .column {
-  padding-top: 5em;
-  padding-bottom: 5em;
-}
-footer .ui.list {
-  margin: 0;
 }
 footer.footer.segment {
   margin-top: auto !important;
@@ -258,15 +234,9 @@ strong {
   white-space: normal;
   overflow-wrap: anywhere;
 }
-.m-w {
-  max-width: none !important;
-}
 #problem-content-segment img {
   max-width: 100%;
   height: auto !important;
-}
-.ui.comments .comment .actions a.right-aligned {
-  float: right;
 }
 @media only screen and (max-width: 767.98px) {
   /* Prevent overflow in ui containers */
@@ -281,13 +251,9 @@ strong {
   mjx-container::-webkit-scrollbar-track {
     margin: 0 0.5em 10px 0;
   }
-  #problem-img-segment {
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
-  }
-  .m-padded-lr-big {
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
+  .m-pd-lr {
+    padding-left: 1em !important;
+    padding-right: 1em !important;
   }
   /* Hide the secondary menu on mobile devices */
   header .secondary.inverted.menu .item,
@@ -297,23 +263,12 @@ strong {
   header .secondary.menu .toc.item {
     display: block;
   }
-  .ui.vertical.segment .m-padded-lr-big {
-    padding-left: 1em !important;
-    padding-right: 1em !important;
-  }
   /* Masthead on home page*/
   .masthead.segment {
-    min-height: 350px;
+    min-height: 500px;
   }
   .masthead h1.ui.header {
-    font-size: 2em;
-    margin-top: 1.5em;
-  }
-  .masthead h2 {
-    margin-top: 0.5em;
-    font-size: 1.5em;
-  }
-  .ui.vertical.stripe {
-    padding: 5em 0em;
+    font-size: 3em;
+    margin-top: 2em;
   }
 }

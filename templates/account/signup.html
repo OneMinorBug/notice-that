@@ -18,46 +18,46 @@
     <h1 class="ui huge centered header m-mt0-5 m-mb1">{% trans "Create a " %}<strong>NoticeThat</strong>{% trans " account" %}</h1>
 
     <form method="post" action="{% url 'account_signup' %}" class="ui large form {% if form.errors %}error{% endif %}" novalidate>
-        {% csrf_token %}
-        {% for error in form.non_field_errors %}
-            <div class="ui error message">{{ error }}</div>
+      {% csrf_token %}
+      {% for error in form.non_field_errors %}
+          <div class="ui error message">{{ error }}</div>
+      {% endfor %}
+
+      <!-- Username Field -->
+      <div class="field {% if form.username.errors %}error{% endif %}">
+        <div class="ui left icon input"><i class="user circle icon"></i>{{ form.username }}</div>
+        {% for error in form.username.errors %}
+          <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
         {% endfor %}
+      </div>
 
-        <!-- Username Field -->
-        <div class="field {% if form.username.errors %}error{% endif %}">
-          <div class="ui left icon input"><i class="user circle icon"></i>{{ form.username }}</div>
-          {% for error in form.username.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <!-- Email Field -->
+      <div class="field {% if form.email.errors %}error{% endif %}">
+        <div class="ui left icon input"><i class="mail icon"></i>{{ form.email }}</div>
+        {% for error in form.email.errors %}
+          <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Email Field -->
-        <div class="field {% if form.email.errors %}error{% endif %}">
-          <div class="ui left icon input"><i class="mail icon"></i>{{ form.email }}</div>
-          {% for error in form.email.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <!-- Password Field -->
+      <div class="field {% if form.password1.errors %}error{% endif %}">
+        <div class="ui left icon input"><i class="lock icon"></i>{{ form.password1 }}</div>
+        {% for error in form.password1.errors %}
+          <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Password Field -->
-        <div class="field {% if form.password1.errors %}error{% endif %}">
-          <div class="ui left icon input"><i class="lock icon"></i>{{ form.password1 }}</div>
-          {% for error in form.password1.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
-          {% endfor %}
-        </div>
+      <!-- Confirm Password Field -->
+      <div class="field {% if form.password2.errors %}error{% endif %}">
+        <div class="ui left icon input"><i class="lock icon"></i>{{ form.password2 }}</div>
+        {% for error in form.password2.errors %}
+          <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
+        {% endfor %}
+      </div>
 
-        <!-- Confirm Password Field -->
-        <div class="field {% if form.password2.errors %}error{% endif %}">
-          <div class="ui left icon input"><i class="lock icon"></i>{{ form.password2 }}</div>
-          {% for error in form.password2.errors %}
-            <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        <button type="submit" class="ui fluid large m-primary button">{% trans "Sign Up" %}</button>
-        <div class="ui divider"></div>
-        <p>Already have an account? <a href="{% url 'account_login' %}">{% trans "Log in here" %}</a></p>
+      <button type="submit" class="ui fluid large m-primary button">{% trans "Sign Up" %}</button>
+      <div class="ui divider"></div>
+      <p>Already have an account? <a href="{% url 'account_login' %}">{% trans "Log in here" %}</a></p>
     </form>
   </div>
 {% endblock %}
