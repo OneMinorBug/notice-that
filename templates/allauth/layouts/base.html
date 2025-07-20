@@ -15,8 +15,8 @@
 <div class="ui container m-padded-tb-big">
 	<div class="ui grid">
 		<div class="column m-form">
-			{% include 'account/partials/messages.html' %}
-
+			
+			{% block messages %}{% include 'account/partials/messages.html' %}{% endblock messages %}
 			{% block content %}{% endblock content %}
 			{% block extra_body %}{% endblock extra_body %}
 
