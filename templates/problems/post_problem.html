@@ -16,7 +16,7 @@
 {% block title %}Post -{% endblock %}
 
 {% block content %}
-<div class="ui vertical grid m-padded-tb-medium">
+<div class="ui vertical grid m-mtb-medium">
   <div class="ui container">
     <div class="ui segment">
       <h2>Post Problem</h2>
@@ -91,8 +91,9 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-<script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
-<script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
-<script src="{% static 'js/post.js' %}"></script>
+  {{ block.super }}
+  <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+  <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
+  <script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
+  <script src="{% static 'js/post.js' %}"></script>
 {% endblock %}
