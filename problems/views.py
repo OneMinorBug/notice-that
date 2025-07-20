@@ -38,14 +38,14 @@ def problems(request):
         problems = Problem.objects.all()
     else:
         problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
-    return render(request, 'problems.html', {'problems': problems})
+    return render(request, 'problems/problems.html', {'problems': problems})
 
 def archives(request):
     if request.user.is_staff:
         problems = Problem.objects.all()
     else:
         problems = Problem.objects.filter(scheduled_post_at__lte=timezone.now())
-    return render(request, 'archives.html', {'problems': problems})
+    return render(request, 'problems/archives.html', {'problems': problems})
 
 def about(request):
     return render(request, 'about.html', {})
@@ -120,7 +120,7 @@ def problem_detail(request, pk):
     visible_top_level_comments = comments_qs.filter(parent=None)
     user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
 
-    return render(request, 'problem_detail.html', {
+    return render(request, 'problems/problem_detail.html', {
         'problem': problem,
         'comments': visible_top_level_comments,
         'pinned_comment': pinned_comment,
@@ -168,13 +168,13 @@ def post_problem(request):
     else:
         problem_form = ProblemForm(prefix='problem')
         solution_form = CommentForm(prefix='solution', content_required=False) # !!! Solution is not required
-    return render(request, 'post_problem.html', {'problem_form': problem_form, 'solution_form': solution_form})
+    return render(request, 'problems/post_problem.html', {'problem_form': problem_form, 'solution_form': solution_form})
 
 @require_GET
 def search(request):
     q = request.GET.get('q')
     problems = Problem.objects.filter(Q(title__icontains=q)|Q(content__icontains=q), scheduled_post_at__lte=timezone.now())
-    return render(request, 'archives.html', {'problems': problems})
+    return render(request, 'problems/archives.html', {'problems': problems})
 
 @login_required
 def upload_image(request):
