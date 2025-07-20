@@ -1,0 +1,48 @@
+{% extends 'layouts/1.html' %}
+
+{% block head %}
+	{{ block.super }}
+	<meta name="title" content="Archives | NoticeThat">
+	<style>
+		#search-button { background: none; border: none; cursor: pointer; }
+	</style>
+{% endblock %}
+
+{% block title %}Archives -{% endblock %}
+
+{% block content %}
+<div class="ui grid m-mtb-medium">
+	<div class="ui left aligned container">
+		<div class="ui top attached segment">
+			<div class="ui two column grid ">
+				<div class="column">
+					<h2>Archives</h2>
+				</div>
+				<div class="right aligned column">
+					<h2>{{ problems|length }} Problems</h2>
+				</div>
+			</div>
+		</div>
+
+		<div class="ui fluid vertical menu">
+			<div class="ui search item">
+					<form method="GET" class="ui transparent icon input" role="search" action="{% url 'problems:search' %}">
+						{% csrf_token %}
+						<input class="prompt" type="search" name="q" placeholder="Search..." aria-label = "search">
+						<button type="submit" id="search-button"><i class="search icon"></i></button>
+					</form>
+				<div class="results"></div>
+			</div>
+			{% for problem in problems reversed %}
+				<a class="item" target="_blank" href="{% url 'problems:problem_detail' problem.id %}">
+					<span>
+						<i class="small m-primary circle icon"></i>
+						{{ problem.title }}
+					</span>
+					<div class="ui basic m-primary left pointing label">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
+				</a>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}

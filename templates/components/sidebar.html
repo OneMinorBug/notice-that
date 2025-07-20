@@ -1,5 +1,5 @@
 <div class="ui vertical inverted menu sidebar">
-  <a class="item m-pd-small" href="{% url 'problems:home' %}">
+  <a class="item" href="{% url 'problems:home' %}">
     <img id="logo" src={% static 'images/logo.png' %}>
   </a>
   <a class="item" href="{% url 'problems:home' %}">Home</a>
@@ -13,8 +13,9 @@
     <a class="item" href="{% url 'profiles:profile' %}">Profile</a>
   {% endif %}
   {% if user.is_authenticated %}
-    <a class="item" href="{% url 'accounts:logout' %}">Logout</a>
+    <a class="item" href="{% url 'account_logout' %}">Log Out</a>
   {% else %}
-    <a class="item" href="{% url 'accounts:login' %}">Login/Sign Up</a>
+    <a class="item" href="{% url 'account_login' %}">Log In</a>
+    <a class="item" href="{% url 'account_signup' %}">Sign Up</a>
   {% endif %}
 </div>
