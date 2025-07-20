@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'django.contrib.sites',
+    'allauth',
+    'allauth.account',
     'django_mathjax',
     'accounts',
     'problems',
@@ -74,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'notice_that.urls'
@@ -132,6 +135,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# ALLAUTH CONFIGURATION
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGIN_METHODS = ['username', 'email']
+ACCOUNT_UNIQUE_USERNAME = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[NoticeThat] '
+
+LOGIN_REDIRECT_URL = 'problems:home'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

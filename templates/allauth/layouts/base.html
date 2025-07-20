@@ -1,0 +1,26 @@
+{% extends 'layouts/2.html' %}
+{% load i18n %}
+
+{% block title %}{% block head_title %}{% endblock head_title %} -{% endblock %}
+
+{% block head %}
+	{{ block.super }}
+	<style type="text/css">
+  		.grid .m-form { max-width: 500px; margin: 0 auto;}
+	</style>
+	{% block extra_head %}{% endblock extra_head %}
+{% endblock %}
+
+{% block auth_content %}
+<div class="ui container m-padded-tb-big">
+	<div class="ui grid">
+		<div class="column m-form">
+			{% include 'account/partials/messages.html' %}
+
+			{% block content %}{% endblock content %}
+			{% block extra_body %}{% endblock extra_body %}
+
+		</div>
+	</div>
+</div>
+{% endblock%}

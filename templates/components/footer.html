@@ -4,7 +4,11 @@
 			<div class="three wide column">
 				<div class="ui inverted link list">
 					<a href="{% url 'problems:home' %}" class="item">Home</a>
-					<a href="{% url 'accounts:register' %}" class="item">Register</a>
+					{% if not user.is_authenticated %}
+						<a href="{% url 'account_signup' %}" class="item">Sign Up</a>
+					{% else %}
+						<a href="{% url 'profiles:profile' %}" class="item">Profile</a>
+					{% endif %}
 					<a href="{% url 'problems:archives' %}" class="item">Archives</a>
 				</div>
 			</div>

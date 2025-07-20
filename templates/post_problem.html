@@ -91,6 +91,7 @@
 {% endblock %}
 
 {% block scripts %}
+{{ block.super }}
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
 <script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>

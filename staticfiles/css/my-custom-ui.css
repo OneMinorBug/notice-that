@@ -72,13 +72,13 @@ mjx-container::-webkit-scrollbar-thumb {
 mjx-container::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
+.m-padded-tb0 {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 .m-padded-tb-tiny {
   padding-top: 0.5em !important;
   padding-bottom: 0.5em !important;
-}
-.m-padded-tb-mini {
-  padding-top: 0.7em !important;
-  padding-bottom: 0.7em !important;
 }
 .m-padded-tb-small {
   padding-top: 1em !important;
@@ -96,7 +96,7 @@ mjx-container::-webkit-scrollbar-thumb:hover {
   padding-top: 10em !important;
   padding-bottom: 10em !important;
 }
-.m-padded-lr-small {
+.m-padded-lr-medium {
   padding-left: 2em !important;
   padding-right: 2em !important;
 }
@@ -107,9 +107,6 @@ mjx-container::-webkit-scrollbar-thumb:hover {
 .m-padded-lr-large {
   padding-left: 10em !important;
   padding-right: 10em !important;
-}
-.m-pd-mini {
-  padding-bottom: 0.4em !important;
 }
 .m-end {
   align-self: end;
