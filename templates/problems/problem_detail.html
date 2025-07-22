@@ -14,10 +14,7 @@
   <link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
 	<style>
     .m-maxw { max-width: none !important; }
-		#editor—wrapper {
-			border: 1px solid #ccc;
-			z-index: 100; /* If you need */
-		}
+		#editor-wrapper { border: 1px solid #ccc; }
 		#toolbar-container { border-bottom: 1px solid #ccc; }
 		#editor-container { height: 300px; }
 	</style>
@@ -63,11 +60,11 @@
         <form class="ui reply form {% if comment_form.content.errors %}error{% endif %}" method="post" id="comment-form" novalidate>
           {% csrf_token %}
           <div class="field {% if comment_form.content.errors %}error{% endif %}">
-            <div id="editor—wrapper">
+            <div id="editor-wrapper">
               <div id="toolbar-container"><!-- toolbar --></div>
               <div id="editor-container" ><!-- editor --></div>
             </div>
-            <textarea id="editor-content" name="content" style="display:none;">{% if not comment_form.content.errors %}{{ comment_form.content.value|default:'' }}{% endif %}</textarea>
+            {{ comment_form.content }}
             {% for error in comment_form.content.errors %}
               <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
             {% endfor %}

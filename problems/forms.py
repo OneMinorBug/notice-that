@@ -19,6 +19,10 @@ class ProblemForm(forms.ModelForm):
         model = Problem
         fields = ['title', 'content', 'image', 'scheduled_post_at', 'solution_post_at']
         widgets = {
+            'content': forms.Textarea(attrs={
+                'id': 'problem-content',
+                'style': 'display: none;',
+            }),
             'scheduled_post_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'solution_post_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
@@ -29,8 +33,8 @@ class CommentForm(forms.ModelForm):
         fields = ['content']
         widgets = {
             'content': forms.Textarea(attrs={
-                'placeholder': 'Type your reply here...',
-                'rows': 3,  # Adjust the height if needed
+                'id': 'comment-content',
+                'style': 'display: none;',
             })
         }
     
