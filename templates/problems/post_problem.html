@@ -2,7 +2,8 @@
 
 {% block head %}
   {{ block.super }}
-	<link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'css/math_render.bundle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/post.bundle.css' %}">
 	<style>
 		#editor-wrapper, #solution-wrapper { border: 1px solid #ccc; }
 		#toolbar-container, #solution-toolbar-container { border-bottom: 1px solid #ccc; }
@@ -89,8 +90,6 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-  <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
-  <script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
-  <script src="{% static 'js/post.js' %}"></script>
+  <script src="{% static 'js/math_render.bundle.js' %}"></script>
+  <script src="{% static 'js/post.bundle.js' %}"></script>
 {% endblock %}

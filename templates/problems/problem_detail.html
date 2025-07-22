@@ -11,24 +11,16 @@
 
 {% block head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/math_render.bundle.css' %}">
+  {% if user.is_authenticated %}
+    <link rel="stylesheet" href="{% static 'css/comment_form.bundle.css' %}">
+  {% endif %}
 	<style>
     .m-maxw { max-width: none !important; }
 		#editor-wrapper { border: 1px solid #ccc; }
 		#toolbar-container { border-bottom: 1px solid #ccc; }
 		#editor-container { height: 300px; }
 	</style>
-  <script>
-    MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        },
-        svg: {
-            fontCache: 'global'
-        }
-    };
-  </script>
 {% endblock %}
 
 {% block content %}
@@ -118,11 +110,9 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-  <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
-  <script type="text/javascript" id="MathJax-script" defer src="{% static 'mathjax/es5/tex-svg.js' %}"></script>
+  <script src="{% static 'js/math_render.bundle.js' %}"></script>
   {% if user.is_authenticated %}
-    <script src="{% static 'js/comment_form.js' %}"></script>
-    <script src="{% static 'js/comment.js' %}"></script>
+    <script src="{% static 'js/comment_form.bundle.js' %}"></script>
+    <script src="{% static 'js/comment.bundle.js' %}"></script>
   {% endif %}
 {% endblock %}
