@@ -1,3 +1,10 @@
+import '@wangeditor/editor/dist/css/style.css';
+import { Boot, createEditor, createToolbar, i18nChangeLanguage } from '@wangeditor/editor';
+import formulaModule from '@wangeditor/plugin-formula';
+
+Boot.registerModule(formulaModule);
+i18nChangeLanguage('en');
+
 // This function gets the CSRF token from the browser's cookies. It's the standard function provided by the Django documentation
 function getCookie(name) {
     let cookieValue = null;
@@ -15,20 +22,26 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// A reusable function to initialize a WangEditor instance.
-function initWangEditor(editorContainerId, toolbarContainerId, targetTextareaId, placeholderText) {
-    const editorContainer = document.getElementById(editorContainerId);
-    if (!editorContainer) {
-        return;
-    }
+// Globals for both editors
+let problemEditor = null;
+let solutionEditor = null;
 
-    const { createEditor, createToolbar } = window.wangEditor;
-    const targetTextarea = document.getElementById(targetTextareaId);
+// Reusable function to initialize a WangEditor instance.
+function initWangEditor(editorContainerId, toolbarContainerId, textareaId, placeholderText) {
+    const editorContainer = document.getElementById(editorContainerId);
+    const toolbarContainer = document.getElementById(toolbarContainerId);
+    const textarea = document.getElementById(textareaId);
+    if (!editorContainer || !toolbarContainer || !textarea) return;
 
     const editorConfig = {
         placeholder: placeholderText,
         onChange(editor) {
-            targetTextarea.value = editor.getHtml();
+            textarea.value = editor.getHtml();
+        },
+        hoverbarKeys: {
+            formula: {
+                menuKeys: ['editFormula'],
+            },
         },
         MENU_CONF: {
             uploadImage: {
@@ -37,15 +50,15 @@ function initWangEditor(editorContainerId, toolbarContainerId, targetTextareaId,
                 maxFileSize: 1 * 1024 * 1024, // 1MB
                 allowedFileTypes: ['image/*'],
                 headers: { 'X-CSRFToken': getCookie('csrftoken') }, // Add the CSRF token to the request headers
-                onSuccess(file, res) {console.log('Image upload successful:', res)},
-                onFailed(file, res) {console.log('Image upload failed:', res)},
-                onError(file, err, res) {console.log('Image upload error:', err, res)},
+                onSuccess(file, res) {console.log('Image upload successful:', res);},
+                onFailed(file, res) {console.log('Image upload failed:', res);},
+                onError(file, err, res) {console.log('Image upload error:', err, res);},
             }
         }
     };
 
     // If a user submits an invalid form, Django will have already filled this textarea with their old content. If it's a new form, this will be empty.
-    const initialHtml = targetTextarea.value;
+    const initialHtml = textarea.value;
 
     const editor = createEditor({
         selector: `#${editorContainerId}`,
@@ -54,14 +67,47 @@ function initWangEditor(editorContainerId, toolbarContainerId, targetTextareaId,
         mode: 'simple',
     });
 
+    const toolbarConfig = {
+        insertKeys: {
+            index: 20,
+            keys: ['insertFormula'],
+        },
+    };
+
     createToolbar({
         editor,
         selector: `#${toolbarContainerId}`,
+        config: toolbarConfig,
         mode: 'simple',
+    });
+
+    return editor;
+}
+
+function setupPreviewButton(previewBtnId, previewContainerId, getEditorContent) {
+    const previewBtn = document.getElementById(previewBtnId);
+    const previewContainer = document.getElementById(previewContainerId);
+    if (!previewBtn || !previewContainer) return;
+
+    previewBtn.addEventListener('click', () => {
+        const isVisible = previewContainer.style.display === 'block';
+
+        if (isVisible) {
+            previewContainer.style.display = 'none';
+            previewContainer.innerHTML = '';
+        } else {
+            previewContainer.style.display = 'block';
+            const editorHtml = getEditorContent();
+            previewContainer.innerHTML = editorHtml;
+
+            if (window.renderMathInElement) {
+                window.renderMathInElement(previewContainer);
+            }
+        }
     });
 }
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
 
     // Fomantic UI form validation
     $('.ui.form').form({
@@ -76,22 +122,21 @@ $(document).ready(function() {
         }
     });
 
-    if (window.wangEditor) {
-        window.wangEditor.i18nChangeLanguage('en')
+    problemEditor = initWangEditor(
+        'editor-container',
+        'toolbar-container',
+        'problem-content',
+        'Enter the problem here...'
+    );
 
-        initWangEditor(
-            'editor-container', 
-            'toolbar-container', 
-            'problem-content',
-            'Enter the problem here...'
-        );
+    solutionEditor = initWangEditor(
+        'solution-editor-container',
+        'solution-toolbar-container',
+        'comment-content',
+        'Enter the solution here...'
+    );
 
-        initWangEditor(
-            'solution-editor-container', 
-            'solution-toolbar-container', 
-            'comment-content',
-            'Enter the solution here...'
-        );
-    }
+    setupPreviewButton('preview-problem-btn', 'preview-problem-container', () => problemEditor.getHtml());
+    setupPreviewButton('preview-solution-btn', 'preview-solution-container', () => solutionEditor.getHtml());
 
 });

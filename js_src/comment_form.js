@@ -3,8 +3,7 @@ import { Boot, createEditor, createToolbar, i18nChangeLanguage } from '@wangedit
 import formulaModule from '@wangeditor/plugin-formula';
 
 Boot.registerModule(formulaModule);
-
-i18nChangeLanguage('en')
+i18nChangeLanguage('en');
 
 // This function gets the CSRF token from the browser's cookies. It's the standard function provided by the Django documentation
 function getCookie(name) {
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const editorConfig = {
         placeholder: 'Type your response here...',
         onChange(editor) {
-            const html = editor.getHtml()
+            const html = editor.getHtml();
             $textarea.value = html; // Sync content
         },
         hoverbarKeys: {
@@ -46,23 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 maxFileSize: 1 * 1024 * 1024, // 1MB
                 allowedFileTypes: ['image/*'],
                 headers: { 'X-CSRFToken': getCookie('csrftoken'), }, // Add the CSRF token to the request headers
-                onSuccess(file, res) {console.log('Image upload successful:', res)},
-                onFailed(file, res) {console.log('Image upload failed:', res)},
-                onError(file, err, res) {console.log('Image upload error:', err, res)}, 
+                onSuccess(file, res) {console.log('Image upload successful:', res);},
+                onFailed(file, res) {console.log('Image upload failed:', res);},
+                onError(file, err, res) {console.log('Image upload error:', err, res);}, 
             },
         }
-    }
+    };
 
     // If a user submits an invalid form, Django will have already filled this textarea with their old content. If it's a new form, this will be empty.
     const initialContent = $textarea.value;
-
-    const toolbarConfig = {
-        insertKeys: {
-            index: 20,
-            keys: ['insertFormula'],
-        },
-    };
-
+    
     const editor = createEditor({
         selector: '#editor-container',
         html: initialContent,
@@ -70,6 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
         mode: 'simple',
     });
 
+    const toolbarConfig = {
+        insertKeys: {
+            index: 20,
+            keys: ['insertFormula'],
+        },
+    };
+    
     createToolbar({
         editor,
         selector: '#toolbar-container',
@@ -80,13 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Preview button click handler
     const previewBtn = document.getElementById('preview-btn');
     const previewContainer = document.getElementById('preview-container');
-    if (!previewBtn || !previewContainer) {
-        console.warn('Preview elements missing');
-        return;
-    }
+    if (!previewBtn || !previewContainer) return;
 
     previewBtn.addEventListener('click', () => {
-        if (previewContainer.style.display === 'block') {
+        const isVisible = previewContainer.style.display === 'block';
+
+        if (isVisible) {
             previewContainer.style.display = 'none';
             previewContainer.innerHTML = '';
         } else {

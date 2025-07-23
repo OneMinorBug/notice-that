@@ -63,7 +63,7 @@ function renderMath(container) {
         errorColor: '#cc0000'
       });
     } catch (err) {
-      console.error('KaTeX render error:', e.message);
+      console.error('KaTeX render error:', err.message);
       span.textContent = `[Math Error: ${cleanLatex}]`;
       span.style.color = 'red';
     }
@@ -79,6 +79,7 @@ function renderMath(container) {
     ],
     throwOnError: false,
     errorColor: '#cc0000',
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'span'],
   });
 }
 
