@@ -58,10 +58,10 @@
               <div id="editor-container" ><!-- editor --></div>
             </div>
             {{ comment_form.content }}
-            <div id="preview-container"></div>
             {% for error in comment_form.content.errors %}
               <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
             {% endfor %}
+            <div id="preview-container"></div>
           </div>
           <div class="ui right aligned container">
             <button id="preview-btn" class="ui button" type="button">Preview</button>
