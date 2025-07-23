@@ -23,19 +23,22 @@ function getCookie(name) {
     return cookieValue;
 }
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
     const editorContainer = document.getElementById('editor-container');
-    if (!editorContainer) return; // Exit if the editor isn't on this page
-    
     const $textarea = document.getElementById('comment-content');
+    if (!editorContainer || !$textarea) return; // Exit if the editor isn't on this page
 
     const editorConfig = {
         placeholder: 'Type your response here...',
         onChange(editor) {
             const html = editor.getHtml()
-            $textarea.value = html;
+            $textarea.value = html; // Sync content
         },
-        
+        hoverbarKeys: {
+            formula: {
+                menuKeys: ['editFormula'],
+            },
+        },
         MENU_CONF: {
             uploadImage: {
                 server: '/upload/',
@@ -45,12 +48,7 @@ $(document).ready(function() {
                 headers: { 'X-CSRFToken': getCookie('csrftoken'), }, // Add the CSRF token to the request headers
                 onSuccess(file, res) {console.log('Image upload successful:', res)},
                 onFailed(file, res) {console.log('Image upload failed:', res)},
-                onError(file, err, res) {console.log('Image upload error:', err, res)},
-            },
-            hoverbarKeys: {
-                formula: {
-                    menuKeys: ['editFormula'],
-                },
+                onError(file, err, res) {console.log('Image upload error:', err, res)}, 
             },
         }
     }
@@ -60,10 +58,10 @@ $(document).ready(function() {
 
     const toolbarConfig = {
         insertKeys: {
-            index: 0,
-            keys: ['insertFormula','editFormula'],
+            index: 20,
+            keys: ['insertFormula'],
         },
-    }
+    };
 
     const editor = createEditor({
         selector: '#editor-container',
@@ -77,6 +75,29 @@ $(document).ready(function() {
         selector: '#toolbar-container',
         config: toolbarConfig,
         mode: 'simple',
-    })
+    });
     
+    // Preview button click handler
+    const previewBtn = document.getElementById('preview-btn');
+    const previewContainer = document.getElementById('preview-container');
+    if (!previewBtn || !previewContainer) {
+        console.warn('Preview elements missing');
+        return;
+    }
+
+    previewBtn.addEventListener('click', () => {
+        if (previewContainer.style.display === 'block') {
+            previewContainer.style.display = 'none';
+            previewContainer.innerHTML = '';
+        } else {
+            previewContainer.style.display = 'block';
+            const editorHtml = editor.getHtml();
+            previewContainer.innerHTML = editorHtml;
+
+            if (window.renderMathInElement) {
+                window.renderMathInElement(previewContainer);
+            }
+        }
+    });
+
 });
