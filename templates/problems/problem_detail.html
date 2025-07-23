@@ -20,6 +20,7 @@
 		#editor-wrapper { border: 1px solid #ccc; }
 		#toolbar-container { border-bottom: 1px solid #ccc; }
 		#editor-container { height: 300px; }
+    #preview-container { border: 1px solid #ccc; margin-top: 0; padding: 10px; display: none; }
 	</style>
 {% endblock %}
 
@@ -57,11 +58,13 @@
               <div id="editor-container" ><!-- editor --></div>
             </div>
             {{ comment_form.content }}
+            <div id="preview-container"></div>
             {% for error in comment_form.content.errors %}
               <div class="ui basic red pointing prompt label transition visible">{{ error }}</div>
             {% endfor %}
           </div>
           <div class="ui right aligned container">
+            <button id="preview-btn" class="ui button" type="button">Preview</button>
             <button class="ui m-primary submit labeled icon button" type="submit">
               <i class="m-primary icon edit"></i> Send
             </button>
@@ -110,9 +113,9 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'js/math_render.bundle.js' %}"></script>
+  <script defer src="{% static 'js/math_render.bundle.js' %}"></script>
   {% if user.is_authenticated %}
-    <script src="{% static 'js/comment_form.bundle.js' %}"></script>
-    <script src="{% static 'js/comment.bundle.js' %}"></script>
+    <script defer src="{% static 'js/comment_form.bundle.js' %}"></script>
+    <script defer src="{% static 'js/comment.bundle.js' %}"></script>
   {% endif %}
 {% endblock %}

@@ -8,9 +8,10 @@ module.exports = {
     math_render: './js_src/math_render.js',
     main: './css_src/main.css',
     comment: './js_src/comment.js',
-    password_reset_from_key: './js_src/password_reset_from_key.js',
-    password_reset: './js_src/password_reset.js',
+    login: './js_src/login.js',
     signup: './js_src/signup.js',
+    password_reset: './js_src/password_reset.js',
+    password_reset_from_key: './js_src/password_reset_from_key.js',
   },
 
   output: {

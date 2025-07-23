@@ -1,43 +1,90 @@
 import 'katex/dist/katex.min.css';
 import katex from 'katex';
+import renderMathInElement from 'katex/contrib/auto-render';
 
-/**
- * Finds all wangeditor formula spans within a given container element and renders them using KaTeX.
- * @param {HTMLElement} container The parent element to search within.
- */
-function renderMathInElement(container) {
-  // If the container doesn't exist, do nothing.
-  if (!container) return;
+//  Strip known delimiters from LaTeX string
+function parseLatexWithDelimiters(raw) {
+  if (!raw || typeof raw !== 'string') return { cleanLatex: '', displayMode: false };
 
-  const formulaElements = container.querySelectorAll('span[data-w-e-type="formula"]');
+  let latex = raw.trim();
 
-  formulaElements.forEach(span => {
-    // Get the LaTeX string from the 'data-value' attribute.
-    const latex = span.dataset.value;
-    if (latex) {
-      try {
-        // Render the formula using KaTeX.
-        // This will replace the content of the span with the beautifully rendered math.
-        katex.render(latex, span, {
-          throwOnError: false, // Don't stop the whole script if one formula has a typo.
-          displayMode: false   // wangeditor formulas are always inline spans.
-        });
-      } catch (e) {
-        console.error('KaTeX rendering error:', e);
-        // If there's an error, display a helpful message instead of crashing.
-        span.textContent = `[Math Error: ${latex}]`;
-        span.style.color = 'red';
+  // Unescape double backslashes, e.g. "\\(" => "\("
+  latex = latex.replace(/\\\\/g, '\\');
+
+  let displayMode = false;
+
+  // To detect delimiters with optional surrounding whitespace
+  const displayDelimiters = [
+    { left: /^\s*\$\$\s*/, right: /\s*\$\$\s*$/ },
+    { left: /^\s*\\\[\s*/, right: /\s*\\\]\s*$/ }
+  ];
+  const inlineDelimiters = [
+    { left: /^\s*\$\s*/, right: /\s*\$\s*$/ },
+    { left: /^\s*\\\(\s*/, right: /\s*\\\)\s*$/ }
+  ];
+
+  // Remove display delimiters
+  for (const delim of displayDelimiters) {
+    if (delim.left.test(latex) && delim.right.test(latex)) {
+      latex = latex.replace(delim.left, '').replace(delim.right, '').trim();
+      displayMode = true;
+      break;
+    }
+  }
+
+  // Remove inline delimiters if display not set yet
+  if (!displayMode) {
+    for (const delim of inlineDelimiters) {
+      if (delim.left.test(latex) && delim.right.test(latex)) {
+        latex = latex.replace(delim.left, '').replace(delim.right, '').trim();
+        break;
       }
     }
+  }
+
+  return { cleanLatex: latex, displayMode };
+}
+
+// Renders KaTeX in static content like problem body or comments
+function renderMath(container) {
+  if (!container) return;
+
+  // First, render any custom <span data-w-e-type="formula"> (used by WangEditor)
+  container.querySelectorAll('span[data-w-e-type="formula"]').forEach(span => {
+    const raw = span.dataset.value;
+    if (!raw) return;
+
+    const { cleanLatex, displayMode } = parseLatexWithDelimiters(raw);
+
+    try {
+      katex.render(cleanLatex, span, {
+        throwOnError: false,
+        displayMode,
+        errorColor: '#cc0000'
+      });
+    } catch (err) {
+      console.error('KaTeX render error:', e.message);
+      span.textContent = `[Math Error: ${cleanLatex}]`;
+      span.style.color = 'red';
+    }
+  });
+
+  // Then use KaTeX auto-render for inline/display math with delimiters
+  renderMathInElement(container, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '\\[', right: '\\]', display: true },
+      { left: '$', right: '$', display: false },
+      { left: '\\(', right: '\\)', display: false },
+    ],
+    throwOnError: false,
+    errorColor: '#cc0000',
   });
 }
 
-// Make this function globally available so other scripts (like comment.js) can call it.
-window.renderMathInElement = renderMathInElement;
+window.renderMathInElement = renderMath;
 
-// When the page first loads, run the renderer on the main content areas.
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Rendering initial math content...');
-  renderMathInElement(document.getElementById('problem-content-segment'));
-  renderMathInElement(document.querySelector('.ui.comments'));
+  renderMath(document.getElementById('problem-content-segment'));
+  renderMath(document.querySelector('.ui.comments'));
 });
