@@ -12,6 +12,7 @@ module.exports = {
     signup: './js_src/signup.js',
     password_reset: './js_src/password_reset.js',
     password_reset_from_key: './js_src/password_reset_from_key.js',
+    lightbox: './js_src/lightbox.js'
   },
 
   output: {

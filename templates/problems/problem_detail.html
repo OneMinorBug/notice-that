@@ -109,6 +109,9 @@
     </div>
   </div>
 </div>
+<div id="simple-lightbox" class="lightbox">
+  <img id="lightbox-img" class="lightbox-content" src="">
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -118,4 +121,5 @@
     <script defer src="{% static 'js/comment_form.bundle.js' %}"></script>
     <script defer src="{% static 'js/comment.bundle.js' %}"></script>
   {% endif %}
+  <script defer src="{% static 'js/lightbox.bundle.js' %}"></script>
 {% endblock %}
