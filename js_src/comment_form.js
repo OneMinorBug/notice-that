@@ -1,26 +1,11 @@
 import '@wangeditor/editor/dist/css/style.css';
 import { Boot, createEditor, createToolbar, i18nChangeLanguage } from '@wangeditor/editor';
 import formulaModule from '@wangeditor/plugin-formula';
+import { getCookie } from './utils/csrf';
+import { renderMath } from './utils/math_helpers';
 
 Boot.registerModule(formulaModule);
 i18nChangeLanguage('en');
-
-// This function gets the CSRF token from the browser's cookies. It's the standard function provided by the Django documentation
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     const editorContainer = document.getElementById('editor-container');
@@ -92,9 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const editorHtml = editor.getHtml();
             previewContainer.innerHTML = editorHtml;
 
-            if (window.renderMathInElement) {
-                window.renderMathInElement(previewContainer);
-            }
+            renderMath(previewContainer);
         }
     });
 
