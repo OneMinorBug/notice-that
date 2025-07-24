@@ -8,7 +8,9 @@ def is_content_effectively_empty(html_content):
 
     soup = BeautifulSoup(html_content, 'html.parser')
     # Check for significant non-text tags.
-    if soup.find(['img', 'iframe', 'video']):
+    if soup.find(['img', 'iframe', 'video', 'w-e-formula-card']):
+        return False
+    if soup.find(attrs={"data-w-e-type": "formula"}):
         return False
     
     text_content = soup.get_text(strip=True)

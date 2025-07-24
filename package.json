@@ -1,6 +1,22 @@
 {
+  "name": "notice-that",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "Zhibo Sheng",
   "dependencies": {
     "@wangeditor/editor": "^5.1.23",
-    "mathjax": "^3.2.2"
+    "@wangeditor/plugin-formula": "^1.0.11",
+    "katex": "^0.16.22"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.2",
+    "webpack": "^5.100.2",
+    "webpack-cli": "^6.0.1"
   }
 }
