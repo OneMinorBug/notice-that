@@ -12,6 +12,8 @@
     gtag('config', 'G-MBMH8BXRL8');
   </script>
   <title>{% block title %}{% endblock %}NoticeThat</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Zhibo Sheng">
   <meta name="description" content="Discover the beauty of math on our site with fun and interesting math problems.">
   <meta name="keywords" content="math, problem solving, algebra, geometry, learning, fun, interesting, math problems, math puzzles, math games, math challenges, math quizzes, math trivia, math facts, math history, math jokes, math riddles">
@@ -21,17 +23,13 @@
   <meta property="og:title" content="{% block og-title %}NoticeThat{% endblock %}">
   <meta property="og:description" content="{% block og-description %}Discover the beauty of math on our site with fun and interesting math problems.{% endblock %}">
   <meta property="twitter:image" content="{% block tw-image %}http://{{ request.META.HTTP_HOST }}{% static 'images/NoticeThat_tw.jpg' %}{% endblock %}">
-    
-  {% block head %}
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="{% static "images/favicon.ico" %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.4/dist/semantic.min.css">
-  <link rel="stylesheet" href={% static "css/my-custom-ui.css" %} >
+  <link rel="stylesheet" href={% static "css/main.bundle.css" %} >
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.4/dist/semantic.min.js"></script>
-  {% endblock%}
-
+  
+  {% block head %}{% endblock %}
 </head>
 
 {% block layout %}{% endblock %}
