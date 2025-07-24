@@ -2,11 +2,13 @@
 
 {% block head %}
   {{ block.super }}
-	<link rel="stylesheet" href="{% static 'wangeditor/editor/dist/css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'css/math_render.bundle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/post.bundle.css' %}">
 	<style>
 		#editor-wrapper, #solution-wrapper { border: 1px solid #ccc; }
 		#toolbar-container, #solution-toolbar-container { border-bottom: 1px solid #ccc; }
 		#editor-container, #solution-editor-container { height: 500px; }
+    #preview-problem-container, #preview-solution-container { border: 1px solid #ccc; margin-top: 0; padding: 10px; display: none; }
 	</style>
 {% endblock %}
 
@@ -57,6 +59,10 @@
           {% if problem_form.content.errors %}
             <div class="ui basic red pointing prompt label transition visible">{{ problem_form.content.errors.0 }}</div>
           {% endif %}
+          <div id="preview-problem-container"></div>
+          <div class="ui right aligned container">
+            <button id="preview-problem-btn" class="ui button" type="button">Preview</button>
+          </div>
         </div>
         <div class="ui divider"></div>
         <div class="field {% if solution_form.content.errors %}error{% endif %}">
@@ -69,6 +75,10 @@
           {% if solution_form.content.errors %}
             <div class="ui basic red pointing prompt label transition visible">{{ solution_form.content.errors.0 }}</div>
           {% endif %}
+          <div id="preview-solution-container"></div>
+          <div class="ui right aligned container">
+            <button id="preview-solution-btn" class="ui button" type="button">Preview</button>
+          </div>
         </div>
         <div class="field {% if problem_form.solution_post_at.errors %}error{% endif %}">
           <label for="{{ problem_form.solution_post_at.id_for_label }}">Solution Post Time (optional)</label>
@@ -89,8 +99,6 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
-  <script src="{% static 'wangeditor/editor/dist/index.js' %}"></script>
-  <script src="{% static "mathjax/es5/tex-chtml.js" %}" id="MathJax-script" async></script>
-  <script src="{% static 'js/post.js' %}"></script>
+  <script defer src="{% static 'js/math_render.bundle.js' %}"></script>
+  <script defer src="{% static 'js/post.bundle.js' %}"></script>
 {% endblock %}
