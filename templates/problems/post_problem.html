@@ -2,8 +2,8 @@
 
 {% block head %}
   {{ block.super }}
-	<link rel="stylesheet" href="{% static 'css/math_render.bundle.css' %}">
-  <link rel="stylesheet" href="{% static 'css/post.bundle.css' %}">
+	<link rel="stylesheet" href="{% static 'dist/css/math_render.bundle.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/post.bundle.css' %}">
 	<style>
 		#editor-wrapper, #solution-wrapper { border: 1px solid #ccc; }
 		#toolbar-container, #solution-toolbar-container { border-bottom: 1px solid #ccc; }
@@ -99,6 +99,6 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script defer src="{% static 'js/math_render.bundle.js' %}"></script>
-  <script defer src="{% static 'js/post.bundle.js' %}"></script>
+  <script defer src="{% static 'dist/js/math_render.bundle.js' %}"></script>
+  <script defer src="{% static 'dist/js/post.bundle.js' %}"></script>
 {% endblock %}
