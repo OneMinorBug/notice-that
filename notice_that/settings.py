@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'allauth',
     'allauth.account',
+    'webpack_loader',
     # Local apps
     'accounts',
     'problems',
@@ -178,6 +179,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'dist/',  #  where bundles are in 'static'
+        'STATS_FILE': BASE_DIR / 'webpack-stats.json',
+    }
+}
 
 MEDIA_URL = '/media/'
 

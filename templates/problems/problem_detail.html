@@ -1,4 +1,5 @@
 {% extends 'layouts/1.html' %}
+{% load render_bundle from webpack_loader %}
 
 <meta name="title" content="{{ problem.title|safe }} | NoticeThat">
 {% block title %}{{ problem.title }} -{% endblock %}
@@ -11,9 +12,9 @@
 
 {% block head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'dist/css/math_render.bundle.css' %}">
+  {% render_bundle 'math_render' 'css' %}
   {% if user.is_authenticated %}
-    <link rel="stylesheet" href="{% static 'dist/css/comment_form.bundle.css' %}">
+    {% render_bundle 'comment_form' 'css' %}
   {% endif %}
 	<style>
     .m-maxw { max-width: none !important; }
@@ -116,10 +117,10 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script defer src="{% static 'dist/js/math_render.bundle.js' %}"></script>
+  {% render_bundle 'math_render' 'js' %}
   {% if user.is_authenticated %}
-    <script defer src="{% static 'dist/js/comment_form.bundle.js' %}"></script>
-    <script defer src="{% static 'dist/js/comment.bundle.js' %}"></script>
+    {% render_bundle 'comment_form' 'js' %}
+    {% render_bundle 'comment' 'js' %}
   {% endif %}
-  <script defer src="{% static 'dist/js/lightbox.bundle.js' %}"></script>
+  {% render_bundle 'lightbox' 'js' %}
 {% endblock %}
