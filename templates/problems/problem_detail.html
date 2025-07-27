@@ -11,9 +11,9 @@
 
 {% block head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/math_render.bundle.css' %}">
+  <link rel="stylesheet" href="{% static 'dist/css/math_render.bundle.css' %}">
   {% if user.is_authenticated %}
-    <link rel="stylesheet" href="{% static 'css/comment_form.bundle.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/css/comment_form.bundle.css' %}">
   {% endif %}
 	<style>
     .m-maxw { max-width: none !important; }
@@ -116,10 +116,10 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script defer src="{% static 'js/math_render.bundle.js' %}"></script>
+  <script defer src="{% static 'dist/js/math_render.bundle.js' %}"></script>
   {% if user.is_authenticated %}
-    <script defer src="{% static 'js/comment_form.bundle.js' %}"></script>
-    <script defer src="{% static 'js/comment.bundle.js' %}"></script>
+    <script defer src="{% static 'dist/js/comment_form.bundle.js' %}"></script>
+    <script defer src="{% static 'dist/js/comment.bundle.js' %}"></script>
   {% endif %}
-  <script defer src="{% static 'js/lightbox.bundle.js' %}"></script>
+  <script defer src="{% static 'dist/js/lightbox.bundle.js' %}"></script>
 {% endblock %}
