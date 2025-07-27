@@ -39,11 +39,14 @@ def health_check(request):
 urlpatterns = [
     path('sitemap.xml/', sitemap, {'sitemaps':sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt/', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
-    path('notadmin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path('', include('problems.urls')),
-    path('profiles/', include('profiles.urls')),
-    path('logs/<filename>/', view_log_file, name="view_log_file"),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicon.ico'))),
     path("health/", health_check, name="health_check"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('notadmin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
+    path('profiles/', include('profiles.urls')),
+    path('logs/<filename>/', view_log_file, name="view_log_file"),
+    path('', include('problems.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
