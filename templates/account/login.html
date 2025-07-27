@@ -1,4 +1,5 @@
 {% extends 'allauth/layouts/base.html' %}
+{% load render_bundle from webpack_loader %}
 {% load i18n %}
 
 {% block head %}
@@ -61,5 +62,5 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'dist/js/login.bundle.js' %}"></script>
+  {% render_bundle 'login' 'js' %}
 {% endblock %}

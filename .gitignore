@@ -7,4 +7,5 @@ __pycache__/
 db.sqlite3
 my.cnf
 node_modules/
+webpack-stats.json
 requirements_old.txt
