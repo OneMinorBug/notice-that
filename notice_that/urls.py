@@ -22,6 +22,7 @@ from django.views.generic.base import TemplateView
 from problems.views import view_log_file
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
+from django.http import JsonResponse
 
 #Sitemaps
 from django.contrib.sitemaps.views import sitemap
@@ -32,13 +33,20 @@ sitemaps = {
     'problems' : ProblemSitemap,
 }
 
+def health_check(request):
+    return JsonResponse({"status": "ok"})
+
 urlpatterns = [
     path('sitemap.xml/', sitemap, {'sitemaps':sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt/', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicon.ico'))),
+    path("health/", health_check, name="health_check"),
     path('notadmin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('problems.urls')),
     path('profiles/', include('profiles.urls')),
     path('logs/<filename>/', view_log_file, name="view_log_file"),
-    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicon.ico')))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('', include('problems.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

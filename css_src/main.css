@@ -204,9 +204,35 @@ strong {
   white-space: normal;
   overflow-wrap: anywhere;
 }
-#problem-content-segment img {
+#problem-img-segment img {
   max-width: 100%;
   height: auto !important;
+}
+/* Make images in comments appear clickable */
+.comment .content img, #problem-content-segment img {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.comment .content img:hover, #problem-content-segment img:hover {
+    opacity: 0.8;
+}
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  /* Use Flexbox to center the content (display: flex)*/
+  justify-content: center;
+  align-items: center;
+}
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
 }
 .katex-display { 
   overflow: auto hidden;
