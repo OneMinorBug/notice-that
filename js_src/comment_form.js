@@ -1,6 +1,6 @@
-import '@wangeditor/editor/dist/css/style.css';
-import { Boot, createEditor, createToolbar, i18nChangeLanguage } from '@wangeditor/editor';
-import formulaModule from '@wangeditor/plugin-formula';
+import '@wangeditor-next/editor/dist/css/style.css';
+import { Boot, createEditor, createToolbar, i18nChangeLanguage } from '@wangeditor-next/editor';
+import formulaModule from '@wangeditor-next/plugin-formula';
 import { getCookie } from './utils/csrf';
 import { renderMath } from './utils/math_helpers';
 

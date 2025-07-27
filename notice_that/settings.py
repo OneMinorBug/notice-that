@@ -36,8 +36,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-# Reads DEBUG from .env and intelligently casts 'True', 'on', '1' to True
-DEBUG = env.bool('DEBUG', default=False)
+DEBUG = True if ENVIRONMENT == 'development' else False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.notice-that.com']
 
@@ -113,8 +112,7 @@ WSGI_APPLICATION = 'notice_that.wsgi.application'
 
 DATABASES = { 'default': {} }
 
-POSTGRES_LOCALLY = False
-if ENVIRONMENT == 'production' or POSTGRES_LOCALLY == True:
+if ENVIRONMENT == 'production':
     DATABASES['default'] = dj_database_url.parse(
         env('DATABASE_URL'), 
         conn_max_age=600
@@ -176,14 +174,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Adjust this path if necessary
+    BASE_DIR / 'static',
 ]
 
 MEDIA_URL = '/media/'
 
-if ENVIRONMENT == 'production' or POSTGRES_LOCALLY == True:
+if ENVIRONMENT == 'production':
     STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -199,7 +197,7 @@ if ENVIRONMENT == 'production' or POSTGRES_LOCALLY == True:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 else:
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': env('CLOUD_NAME'),
