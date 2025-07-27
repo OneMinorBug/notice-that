@@ -1,10 +1,11 @@
 .venv/
-media/
-static/
+/media/
+/static/dist/
+/staticfiles/
 __pycache__/
 .env
-.DS_Store
 db.sqlite3
 my.cnf
 node_modules/
+webpack-stats.json
 requirements_old.txt

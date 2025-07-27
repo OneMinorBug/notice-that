@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   entry: {
@@ -12,16 +13,24 @@ module.exports = {
     signup: './js_src/signup.js',
     password_reset: './js_src/password_reset.js',
     password_reset_from_key: './js_src/password_reset_from_key.js',
+    lightbox: './js_src/lightbox.js'
   },
 
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'static/js'),
+    path: path.resolve(__dirname, 'static/dist'),
+    publicPath: '/static/dist/',
+    filename: 'js/[name]-[contenthash].bundle.js',
+    assetModuleFilename: 'fonts/[name][ext][query]',
+    clean: true,
   },
 
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '../css/[name].bundle.css',
+      filename: 'css/[name].bundle.css',
+    }),
+    new BundleTracker({ 
+        path: __dirname, 
+        filename: 'webpack-stats.json' 
     }),
   ],
   
@@ -32,6 +41,12 @@ module.exports = {
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
     ],
+  },
+
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
   },
 
   mode: 'development',
