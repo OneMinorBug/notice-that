@@ -44,9 +44,12 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.notice-that.com']
 if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
     ALLOWED_HOSTS.append(env('RENDER_EXTERNAL_HOSTNAME'))
 
-CSRF_TRUSTED_ORIGINS = ['https://*.notice-that.com', 'https://notice-that.com', 'https://*.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://*.notice-that.com', 'https://*.onrender.com']
 
-INTERNAL_IPS = {'127.0.0.1', 'localhost:8000'}
+if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{env('RENDER_EXTERNAL_HOSTNAME')}")
+
+INTERNAL_IPS = {'127.0.0.1', 'localhost'}
 
 
 # Application definition
@@ -108,13 +111,14 @@ WSGI_APPLICATION = 'notice_that.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {}
-}
+DATABASES = { 'default': {} }
 
 POSTGRES_LOCALLY = False
 if ENVIRONMENT == 'production' or POSTGRES_LOCALLY == True:
-    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
+    DATABASES['default'] = dj_database_url.parse(
+        env('DATABASE_URL'), 
+        conn_max_age=600
+    )
 else:
     DATABASES['default'] = {
         "ENGINE": "django.db.backends.mysql",
