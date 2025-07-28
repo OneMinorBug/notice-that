@@ -20,7 +20,7 @@ class Problem(models.Model):
     solution_comment = models.OneToOneField('Comment', null=True, blank=True, on_delete=models.SET_NULL, related_name='problem_as_solution')
 
     class Meta:
-        ordering = ['scheduled_post_at']
+        ordering = ['-scheduled_post_at']
 
     def __str__(self):
         return self.title

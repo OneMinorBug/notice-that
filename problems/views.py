@@ -103,7 +103,7 @@ def problem_detail(request, pk):
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
     pinned_comment = problem.solution_comment if show_solution else None
-    comments_qs = problem.comments.all()
+    comments_qs = problem.comments.all().prefetch_related('replies', 'account__profile')
 
     if not show_solution and problem.solution_comment:
         solution_thread_ids = get_comment_tree_ids(problem.solution_comment)

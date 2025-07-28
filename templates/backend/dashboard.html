@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Problem Manager - NoticeThat{% endblock %}
+
+{% block layout %}
+  <div class="ui container" style="padding-top: 3rem;">
+    <h2 class="ui dividing header">Problem Manager</h2>
+
+    {% for message in messages %}
+			<div class="ui message {{ message.tags }}">
+				{{ message }}
+			</div>
+		{% endfor %}
+
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Scheduled At</th>
+          <th>Solution</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for problem in problems %}
+          <tr>
+            <td>{{ problem.title }}</td>
+            <td>{{ problem.scheduled_post_at|date:"Y-m-d H:i" }}</td>
+            <td>
+              {% if problem.solution_comment %}
+                <span class="ui green label">Pinned</span>
+              {% else %}
+                <span class="ui red label">None</span>
+              {% endif %}
+            </td>
+            <td>
+              <a class="ui mini primary button" href="{{ problem.get_absolute_url }}" target="_blank">
+                View
+              </a>
+              {% if problem.solution_comment %}
+                <form method="post" action="" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="ui mini red button">Unpin</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="center aligned">No problems found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

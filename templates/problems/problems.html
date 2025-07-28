@@ -6,71 +6,33 @@
 {% endblock %}
 
 {% block content %}
-<div class="ui grid m-mtb-problems">
-	<div class="ui container">
-		{% for message in messages %}
-			<div class="ui message {{ message.tags }}">
-				{{ message }}
+<div class="ui container m-container m-mtb-problems">
+	<div class="ui centered grid">
+		<div class="fifteen wide computer sixteen wide column">
+			{% for message in messages %}
+				<div class="ui message {{ message.tags }}">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<h1>Problems</h1>
+		</div>
+		{% for problem in problems %}
+			<div class="five wide computer eight wide tablet sixteen wide mobile column">
+				<a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
+					<div class="image">
+						{% if problem.image %}
+							<img src="{{ problem.image.url }}" class="rounded image m-cover-image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
+						{% else %}
+							<img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image m-cover-image">
+						{% endif %}
+					</div>
+					<div class="content">
+						<div class="header m-truncate">{{ problem.title }}</div>
+						<div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
+					</div>
+				</a>
 			</div>
 		{% endfor %}
-		<h1>Problems</h1>
-		<div class="ui three column computer only grid">
-			{% for problem in problems reversed %}
-				<div class="column">
-					<a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
-						<div class="image">
-							{% if problem.image %}
-								<img src="{{ problem.image.url }}" class="rounded image m-cover-image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
-							{% else %}
-								<img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image m-cover-image">
-							{% endif %}
-						</div>
-						<div class="content">
-							<div class="header m-truncate">{{ problem.title }}</div>
-							<div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
-						</div>
-					</a>
-				</div>
-			{% endfor %}
-		</div>
-		<div class="ui two column tablet only grid">
-			{% for problem in problems reversed %}
-				<div class="column">
-					<a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
-						<div class="image">
-							{% if problem.image %}
-								<img src="{{ problem.image.url }}" class="rounded image m-cover-image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
-							{% else %}
-								<img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image m-cover-image">
-							{% endif %}
-						</div>
-						<div class="content">
-							<div class="header m-truncate">{{ problem.title }}</div>
-							<div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
-						</div>
-					</a>
-				</div>
-				{% endfor %}
-		</div>
-		<div class="ui one column mobile only grid">
-			{% for problem in problems reversed %}
-				<div class="column">
-					<a class="ui fluid card" href="{% url 'problems:problem_detail' problem.id %}">
-						<div class="image">
-							{% if problem.image %}
-								<img src="{{ problem.image.url }}" class="rounded image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
-							{% else %}
-								<img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
-							{% endif %}
-						</div>
-						<div class="content">
-							<div class="header m-mobile-title">{{ problem.title }}</div>
-							<div class="item">{{ problem.scheduled_post_at|date:"F j, Y" }}</div>
-						</div>
-					</a>
-				</div>
-			{% endfor %}
-		</div>
 	</div>
-</div>  
+</div>
 {% endblock %}

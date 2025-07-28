@@ -27,7 +27,7 @@
 
 {% block content %}
 <div class="ui vertical grid m-mtb-medium">
-  <div class="ui container">
+  <div class="ui container m-container">
     {% if problem.scheduled_post_at and problem.scheduled_post_at > now %}
       <div class="ui yellow message">
           This problem is scheduled to be posted on {{ problem.scheduled_post_at }}.

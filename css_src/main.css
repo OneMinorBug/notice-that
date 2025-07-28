@@ -65,9 +65,6 @@
   margin-top: 2em !important;
   margin-bottom: 6em !important;
 }
-.m-mtb-problems h1 {
-  margin-bottom: 1em;
-}
 .m-mtb-medium {
   margin-top: 3em !important;
   margin-bottom: 3em !important;
@@ -274,5 +271,10 @@ strong {
   .masthead h1.ui.header {
     font-size: 3em;
     margin-top: 2em;
+  }
+}
+@media only screen and (min-width: 992px) {
+  .ui.container.m-container {
+    width: 70% !important; 
   }
 }
