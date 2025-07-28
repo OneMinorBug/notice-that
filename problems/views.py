@@ -69,15 +69,12 @@ def problem_detail(request, pk):
         if 'pin_comment_id' in request.POST and request.user.is_staff:  # Pinning for staffs
             comment_to_pin = get_object_or_404(Comment, id=request.POST['pin_comment_id'], problem=problem)
             # This pins the comment and unpin the previously pinned comment if it exists
-            problem.solution_comment = comment_to_pin
-            problem.solution_post_at = comment_to_pin.created_at
-            problem.save()
+            problem.set_solution(comment_to_pin)
             messages.success(request, 'Solution has been pinned.')
             return redirect('problems:problem_detail', pk=problem.id)
         
         if 'unpin_comment' in request.POST and request.user.is_staff:  # Unpinning for staffs
-            problem.solution_comment = None
-            problem.save()
+            problem.clear_solution()
             messages.success(request, 'Solution has been unpinned.')
             return redirect('problems:problem_detail', pk=problem.id)
         

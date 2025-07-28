@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.db.models import Exists, OuterRef
 from django.utils.html import format_html
 from .models import Problem, Comment
 
@@ -93,28 +93,27 @@ class CommentAdmin(admin.ModelAdmin):
         Handles the custom button logic after the admin form has been processed.
         """
         if "_pin_as_solution" in request.POST:
-            problem = obj.problem
-            problem.solution_comment = obj
-            problem.solution_post_at = obj.created_at
-            problem.save()
+            obj.problem.set_solution(obj)
             self.message_user(request, "This comment has been successfully pinned as the solution.", messages.SUCCESS)
             return HttpResponseRedirect(".")
 
         if "_unpin_as_solution" in request.POST:
-            problem = obj.problem
-            if problem.solution_comment_id == obj.id:
-                problem.solution_comment = None
-                problem.save()
-                self.message_user(request, "The solution has been successfully unpinned.", messages.SUCCESS)
-            else:
-                self.message_user(request, "This comment was not the solution, so no action was taken.", messages.WARNING)
+            obj.problem.clear_solution()
+            self.message_user(request, "The solution has been successfully unpinned.", messages.SUCCESS)
             return HttpResponseRedirect(".")
 
         return super().response_change(request, obj)
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        # For each Comment, check if a Problem exists that has this comment's ID as its solution_comment_id. The result will be stored in 'is_pinned_annotated'.
+        pinned_subquery = Problem.objects.filter(solution_comment_id=OuterRef('pk'))
+        queryset = queryset.annotate(is_pinned_annotated=Exists(pinned_subquery))
+        return queryset
+
     @admin.display(boolean=True, description='Pinned?')
     def is_pinned(self, obj):
-        return Problem.objects.filter(solution_comment_id=obj.id).exists()
+        return obj.is_pinned_annotated
 
     def view_on_site(self, obj):
         return obj.problem.get_absolute_url()

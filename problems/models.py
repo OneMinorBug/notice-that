@@ -40,6 +40,20 @@ class Problem(models.Model):
     def get_absolute_url(self):
         return reverse("problems:problem_detail", kwargs={"pk": self.id})
     
+    def set_solution(self, comment):
+        if comment and comment.problem != self:
+            return
+
+        self.solution_comment = comment
+        if comment:
+            self.solution_post_at = comment.created_at
+        # If comment is None, solution_post_at will remain, which is fine for archival.
+        self.save(update_fields=['solution_comment', 'solution_post_at'])
+
+    def clear_solution(self):
+        self.solution_comment = None
+        self.save(update_fields=['solution_comment'])
+    
 
 class Comment(models.Model):
     problem = models.ForeignKey(Problem, related_name='comments', on_delete=models.CASCADE)
