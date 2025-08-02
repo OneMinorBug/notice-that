@@ -1,14 +1,14 @@
 {% extends 'layouts/1.html' %}
  
-{% block title %}{{profile.user.username }} -{% endblock %} 
+{% block title %}{{profile.user.username }} - {% endblock %} 
 
 {% block head %}
   {{ block.super }}
   <meta name="title" content="Profile | NoticeThat" />
 {% endblock %}
 
-{% block content%}
-<div class="ui container m-pd-tb-medium">
+{% block content %}
+<div class="ui container m-pd-tb-medium m-container">
   <h2>User Profile</h2>
   <div class="ui card">
     <div class="image">
