@@ -2,11 +2,10 @@
 {% load render_bundle from webpack_loader %}
 {% load i18n %}
 
-{% block title %}{% trans "Sign Up" %} -{% endblock %}
+{% block title %}{% trans "Sign Up" %} - {% endblock %}
 
 {% block head %}
   {{ block.super }}
-  <meta name="title" content="Sign up | NoticeThat" />
   <style type="text/css">
     .ui.segment.m-pd3 { padding: 3em; }
     .ui.header.m-mt0-5 { margin-top: 0.5em; }
