@@ -12,7 +12,7 @@ function initWangEditor(editorContainerId, toolbarContainerId, textareaId, place
     const editorContainer = document.getElementById(editorContainerId);
     const toolbarContainer = document.getElementById(toolbarContainerId);
     const textarea = document.getElementById(textareaId);
-    if (!editorContainer || !toolbarContainer || !textarea) return;
+    if (!editorContainer || !toolbarContainer || !textarea) return null;
 
     const editorConfig = {
         placeholder: placeholderText,
@@ -70,21 +70,77 @@ function setupPreviewButton(previewBtnId, previewContainerId, getEditorContent) 
     const previewContainer = document.getElementById(previewContainerId);
     if (!previewBtn || !previewContainer) return;
 
+    previewContainer.style.display = 'none';
+
     previewBtn.addEventListener('click', () => {
         const isVisible = previewContainer.style.display === 'block';
 
         if (isVisible) {
             previewContainer.style.display = 'none';
-            previewContainer.innerHTML = '';
+            previewContainer.innerHTML = ''; // Clear content to save memory
+            previewBtn.innerHTML = '<i class="eye icon"></i> Preview';
         } else {
             previewContainer.style.display = 'block';
             const editorHtml = getEditorContent();
             previewContainer.innerHTML = editorHtml;
+            previewBtn.innerHTML = '<i class="close icon"></i> Close';
 
             renderMath(previewContainer);
         }
     });
 }
+
+function setupImagePreview() {
+    const imageInput = document.getElementById('id_problem-image');
+    const imageClearCheckbox = document.getElementById('id_problem-image-clear');
+    const previewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const placeholderText = document.getElementById('image-placeholder-text');
+    const selectImageButton = document.getElementById('select-image-button');
+    const clearImageButton = document.getElementById('clear-image-button');
+
+    if (!imageInput || !previewContainer || !imagePreview || !selectImageButton || !clearImageButton) {
+        return;
+    }
+
+    selectImageButton.addEventListener('click', function() {
+        imageInput.click(); // This opens the browser's file selection dialog
+    });
+
+    imageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Update the preview
+                imagePreview.src = e.target.result;
+                previewContainer.style.display = 'block';
+                placeholderText.style.display = 'none';
+                clearImageButton.style.display = 'inline-block';
+
+                // Un-check the "clear" checkbox in case it was checked
+                if (imageClearCheckbox) {
+                    imageClearCheckbox.checked = false;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    clearImageButton.addEventListener('click', function() {
+        imageInput.value = '';
+        previewContainer.style.display = 'none';
+        imagePreview.src = ''; // Clear the src to free up memory
+        placeholderText.style.display = 'block';
+        clearImageButton.style.display = 'none';
+
+        // Check the hidden checkbox so Django knows to clear the image on save
+        if (imageClearCheckbox) {
+            imageClearCheckbox.checked = true;
+        }
+    });
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -93,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         on: 'blur', // Validate on blur, but we will manually trigger for editors
         inline: true,
         fields: {
-            'problem-title': {
+            title: {
                 identifier: 'problem-title',
                 rules: [{ type: 'notEmpty', prompt: 'Please enter a title' }]
             }
@@ -122,4 +178,30 @@ document.addEventListener('DOMContentLoaded', () => {
         setupPreviewButton('preview-solution-btn', 'preview-solution-container', () => solutionEditor.getHtml());
     }
 
+    setupImagePreview();
+    
+    const submitButton = document.querySelector('button[type="submit"].m-primary.button');
+
+    if (submitButton) {
+        submitButton.addEventListener('click', function(event) {
+            console.log('Submit button clicked. Forcing editor sync.');
+
+            if (problemEditor) {
+                const problemTextarea = document.getElementById('problem-content');
+                if (problemTextarea) {
+                    problemTextarea.value = problemEditor.getHtml();
+                    console.log('Synced problem content.');
+                }
+            }
+            
+            if (solutionEditor) {
+                const solutionTextarea = document.getElementById('solution-content');
+                if (solutionTextarea) {
+                    solutionTextarea.value = solutionEditor.getHtml();
+                    console.log('Synced solution content.');
+                }
+            }
+            
+        });
+    }
 });

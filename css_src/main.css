@@ -50,8 +50,8 @@
   padding-bottom: 0.5em !important;
 }
 .m-pd-tb-small {
-  padding-top: 1em !important;
-  padding-bottom: 1em !important;
+  padding-top: 2em !important;
+  padding-bottom: 2em !important;
 }
 .m-pd-tb-medium {
   padding-top: 3em !important;
@@ -122,12 +122,38 @@ nav #logo {
   height: 30px;
   width: auto;
 }
-.ui.sidebar {
-  padding: 1rem;
-}
 .ui.sidebar .item {
   line-height: 2;
   font-size: 1.2rem;
+}
+.ui.sidebar.vertical.menu {
+  display: flex;
+  flex-direction: column;
+}
+.ui.sidebar.vertical.menu a.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Push the text to the start and the icon to the end */
+}
+.ui.sidebar.vertical.menu .item p.ui.small.header {
+  margin-top: 5px;
+  color: #888;
+}
+.ui.sidebar.vertical.menu .m-backend-account.item {
+  padding-bottom: 0;
+}
+.m-backend-account.item .ui.grid {
+  margin: -1.5rem -1rem;
+}
+.m-backend-account.item .ui.grid .twelve.wide.column {
+  padding-left: 0;
+  line-height: 1;
+}
+.m-backend-account.item b {
+  color: #fff;
+}
+.m-block {
+  display: block !important;
 }
 .ui.vertical.stripe {
   padding: 3em 0em;
@@ -147,13 +173,9 @@ header.ui.inverted.menu {
 }
 header .ui.container .toc.item {
   padding: 1em;
-  display: none;
 }
 header .ui.container .toc.item i.icon {
   margin: 0;
-}
-nav .secondary.menu .toc.item {
-  display: none;
 }
 .ui.m-primary.button {
   color: #fff;
@@ -206,12 +228,14 @@ strong {
   height: auto !important;
 }
 /* Make images in comments appear clickable */
-.comment .content img, #problem-content-segment img {
-    cursor: pointer;
-    transition: opacity 0.2s;
+.comment .content img,
+#problem-content-segment img {
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
-.comment .content img:hover, #problem-content-segment img:hover {
-    opacity: 0.8;
+.comment .content img:hover,
+#problem-content-segment img:hover {
+  opacity: 0.8;
 }
 .lightbox {
   display: none;
@@ -231,7 +255,7 @@ strong {
   max-height: 90%;
   object-fit: contain;
 }
-.katex-display { 
+.katex-display {
   overflow: auto hidden;
   width: 100%;
   -webkit-overflow-scrolling: touch;
@@ -239,6 +263,46 @@ strong {
   -webkit-mask-image: linear-gradient(to right, black 95%, transparent);
   mask-image: linear-gradient(to right, black 95%, transparent);
 }
+.m-backend-content {
+  padding: 1.5em;
+}
+.m-problem-cell .image.m-cover-image {
+  width: 200px !important;
+}
+.m-preview-text-clamp {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 4; /* The number of lines to show */
+  line-clamp: 4; /* Standard property for future compatibility */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word; /* break very long words */
+}
+#image-upload-segment .ui.button {
+  display: inline-block;
+}
+#image-upload-segment .ui.button#clear-image-button {
+  display: none;
+}
+/* --- DESKTOP STYLES (> 767.98px) --- */
+@media only screen and (min-width: 767.98px) {
+  .m-backend-sidebar {
+    transform: none !important;
+    visibility: visible !important;
+  }
+  .m-backend-body .pusher {
+    margin-left: 260px !important;
+  }
+  .m-mobile-only {
+    display: none !important;
+  }
+}
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+  .m-problem-cell .image.m-cover-image {
+    display: none !important;
+  }
+}
+/* --- MOBILE STYLES (< 767.98px) --- */
 @media only screen and (max-width: 767.98px) {
   /* Prevent overflow in ui containers */
   .ui.ui.ui.container:not(.fluid) {
@@ -256,13 +320,11 @@ strong {
     padding-left: 1em !important;
     padding-right: 1em !important;
   }
-  /* Hide the secondary menu on mobile devices */
-  header .secondary.inverted.menu .item,
-  .secondary.inverted.menu .menu {
-    display: none;
+  .m-desktop-only {
+    display: none !important;
   }
-  header .secondary.menu .toc.item {
-    display: block;
+  header.m-mobile-only {
+    display: block !important;
   }
   /* Masthead on home page*/
   .masthead.segment {
@@ -275,6 +337,6 @@ strong {
 }
 @media only screen and (min-width: 992px) {
   .ui.container.m-container {
-    width: 70% !important; 
+    width: 70% !important;
   }
 }

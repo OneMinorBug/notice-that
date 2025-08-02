@@ -1,10 +1,10 @@
 <header class="ui inverted vertical segment m-pd-tb0">
 	<nav class="ui container m-container m-pd-tb-tiny">
 		<div class="ui large secondary inverted menu">
-			<a class="toc item">
+			<a class="toc item m-mobile-only">
 				<i class="sidebar icon"></i>
 			</a>
-			<a class="item" href="{% url 'problems:home' %}">
+			<a class="item m-desktop-only" href="{% url 'problems:home' %}">
 				<img class="ui small image" id="logo" src={% static 'images/logo.png' %} alt="NoticeThat">
 			</a>
 			<div class="right item">
