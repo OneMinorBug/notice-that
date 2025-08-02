@@ -1,13 +1,14 @@
 <div class="ui vertical inverted menu sidebar">
-  <a class="item" href="{% url 'problems:home' %}">
-    <img id="logo" src={% static 'images/logo.png' %}>
+  <a class="item m-pd-tb-small" href="{% url 'problems:home' %}">
+    <img class="ui centered image" id="logo" src={% static 'images/logo.png' %}>
   </a>
   <a class="item" href="{% url 'problems:home' %}">Home</a>
   <a class="item" href="{% url 'problems:archives' %}">Archives</a>
   <a class="item" href="{% url 'problems:about' %}">About Us</a>
   <a class="item" href="{% url 'problems:contact' %}">Contact Us</a>
   {% if user.is_staff %}
-    <a class="item" href="{% url 'problems:post_problem' %}">Post Problem</a>
+    <a class="item" href="{% url 'problems:problem_create' %}">Post Problem</a>
+    <a class="item" href="{% url 'problems:manage_dashboard' %}">Edit Problems</a>
   {% endif %}
   {% if user.is_authenticated %}
     <a class="item" href="{% url 'profiles:profile' %}">Profile</a>

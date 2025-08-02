@@ -9,8 +9,11 @@ from django.core.files.storage import default_storage
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils import timezone
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView
+from django.contrib.auth.mixins import UserPassesTestMixin
 from .models import Problem, Comment
 from .forms import ProblemForm, CommentForm
 
@@ -54,6 +57,9 @@ def contact(request):
     return render(request, 'contact.html', {})
 
 def problem_detail(request, pk):
+    """
+    Problem detail page with comment functionality and solution pinning/unpinning.
+    """
     problem = get_object_or_404(Problem, id=pk)
     if not request.user.is_staff and problem.scheduled_post_at and problem.scheduled_post_at > timezone.now():
         messages.error(request, "This problem is not available.")
@@ -69,15 +75,12 @@ def problem_detail(request, pk):
         if 'pin_comment_id' in request.POST and request.user.is_staff:  # Pinning for staffs
             comment_to_pin = get_object_or_404(Comment, id=request.POST['pin_comment_id'], problem=problem)
             # This pins the comment and unpin the previously pinned comment if it exists
-            problem.solution_comment = comment_to_pin
-            problem.solution_post_at = comment_to_pin.created_at
-            problem.save()
+            problem.set_solution(comment_to_pin)
             messages.success(request, 'Solution has been pinned.')
             return redirect('problems:problem_detail', pk=problem.id)
         
         if 'unpin_comment' in request.POST and request.user.is_staff:  # Unpinning for staffs
-            problem.solution_comment = None
-            problem.save()
+            problem.clear_solution()
             messages.success(request, 'Solution has been unpinned.')
             return redirect('problems:problem_detail', pk=problem.id)
         
@@ -106,7 +109,7 @@ def problem_detail(request, pk):
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
     pinned_comment = problem.solution_comment if show_solution else None
-    comments_qs = problem.comments.all()
+    comments_qs = problem.comments.all().prefetch_related('replies', 'account__profile')
 
     if not show_solution and problem.solution_comment:
         solution_thread_ids = get_comment_tree_ids(problem.solution_comment)
@@ -134,7 +137,10 @@ def problem_detail(request, pk):
 
 @login_required
 @staff_member_required
-def post_problem(request):
+def problem_create_view(request):
+    """
+    Handles the creation of a new Problem AND its optional official solution comment in a single atomic transaction.
+    """
     if request.method == 'POST':
         problem_form = ProblemForm(request.POST, request.FILES, prefix='problem')
         solution_form = CommentForm(request.POST, prefix='solution', content_required=False)  # !!! Solution is not required
@@ -156,19 +162,69 @@ def post_problem(request):
                     solution_comment.account = request.user
                     solution_comment.created_at = problem.solution_post_at
                     solution_comment.save()
-                    problem.solution_comment = solution_comment
+                    problem.solution_comment = solution_comment # Link the new comment as the official solution
                     problem.save() # Save the problem again to store the link
                 
                 messages.success(request, 'Added one new problem')
-                return redirect('problems:problems')
+                return redirect('problems:manage_dashboard')
         else:
-            print("Problem Form Errors:", problem_form.errors)
-            print("Solution Form Errors:", solution_form.errors)
             messages.error(request, "Parameter error, failed to post. Please check the form.")
     else:
         problem_form = ProblemForm(prefix='problem')
         solution_form = CommentForm(prefix='solution', content_required=False) # !!! Solution is not required
-    return render(request, 'problems/post_problem.html', {'problem_form': problem_form, 'solution_form': solution_form})
+    return render(request, 'problems/problem_form.html', {'problem_form': problem_form, 'solution_form': solution_form})
+
+@login_required
+@staff_member_required
+def problem_update_view(request, pk):
+    """
+    Handles editing an existing Problem and its associated official solution comment
+    """
+    problem = get_object_or_404(Problem, pk=pk)
+    solution_comment_instance = problem.solution_comment
+
+    if request.method == 'POST':
+        # Bind submitted data to forms, linked to the existing instances.
+        # 'instance=...' tells the form we are editing an existing object
+        problem_form = ProblemForm(request.POST, request.FILES, instance=problem, prefix='problem')
+        solution_form = CommentForm(request.POST, instance=solution_comment_instance, prefix='solution', content_required=False)
+
+        if problem_form.is_valid() and solution_form.is_valid():
+            with transaction.atomic():
+                # Save the updated problem details
+                problem = problem_form.save()
+                solution_content = solution_form.cleaned_data.get('content')
+
+                if solution_content:
+                    if solution_comment_instance:
+                        solution_form.save()
+                    else:
+                        new_solution_comment = solution_form.save(commit=False)
+                        new_solution_comment.problem = problem
+                        new_solution_comment.account = request.user 
+                        new_solution_comment.created_at = problem.solution_post_at or timezone.now()
+                        new_solution_comment.save()
+                        problem.solution_comment = new_solution_comment
+                        problem.save()
+                
+                elif not solution_content and solution_comment_instance:
+                    problem.solution_comment = None
+                    problem.save()
+
+                messages.success(request, f'Successfully updated problem: "{problem.title}"')
+                return redirect('problems:manage_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    
+    else: # GET request
+        problem_form = ProblemForm(instance=problem, prefix='problem')
+        solution_form = CommentForm(instance=solution_comment_instance, prefix='solution', content_required=False)
+
+    return render(request, 'problems/problem_form.html', {
+        'problem_form': problem_form,
+        'solution_form': solution_form,
+        'problem': problem,
+    })
 
 @require_GET
 def search(request):
@@ -202,3 +258,50 @@ def view_log_file(request, filename):
     with open(file_path, 'r') as file:
         response = HttpResponse(file.read(), content_type='text/plain')
         return response
+
+@login_required    
+@staff_member_required
+def manage_dashboard(request):
+    # Use annotate to pre-calculate comment counts efficiently
+    problems_qs = Problem.objects.all().order_by('-scheduled_post_at').annotate(
+        comment_count=Count('comments')
+    )
+    
+    return render(request, 'problems/dashboard.html', {
+        'problems': problems_qs,
+        'total_problems': problems_qs.count(),
+        'problems_published': problems_qs.filter(scheduled_post_at__lte=timezone.now()).count(),
+        'total_comments': Comment.objects.count(),
+        'total_users': User.objects.count(),
+        'now': timezone.now(),
+    })
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    """
+    A reusable mixin to ensure a user is a staff member before they can access a view.
+    This is the Class-Based View equivalent of the @staff_member_required decorator.
+    """
+    def test_func(self):
+        return self.request.user.is_staff
+
+class DeleteSuccessMessageMixin:
+    """
+    A mixin to add a success message to a DeleteView, inspired by
+    Django's built-in SuccessMessageMixin.
+    """
+    success_message = "" # Default success message
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        success_message = self.success_message % obj.__dict__
+        messages.success(self.request, success_message)
+        # The super().post() call will then handle the actual deletion and the subsequent redirect.
+        return super().post(request, *args, **kwargs)
+    
+class ProblemDeleteView(StaffRequiredMixin, DeleteSuccessMessageMixin, DeleteView):
+    model = Problem
+    template_name = 'problems/problem_confirm_delete.html'
+    success_message = "The problem \"%(title)s\" was deleted."
+    
+    def get_success_url(self):
+        return reverse_lazy('problems:manage_dashboard')

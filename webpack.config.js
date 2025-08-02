@@ -5,7 +5,7 @@ const BundleTracker = require('webpack-bundle-tracker');
 module.exports = {
   entry: {
     comment_form: './js_src/comment_form.js',
-    post: './js_src/post.js',
+    problem_form: './js_src/problem_form.js',
     math_render: './js_src/math_render.js',
     main: './css_src/main.css',
     comment: './js_src/comment.js',

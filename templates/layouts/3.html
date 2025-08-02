@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block layout %}
+<body class="m-backend-body pushable">
+
+  {% include 'components/backend_menu.html' %}
+	
+  <div class="pusher">
+		<!-- MOBILE: The header bar with the hamburger menu icon-->
+		<header class="ui inverted vertical segment m-pd-tb0 m-mobile-only">
+			<div class="ui container m-container m-pd-tb-tiny">
+				<div class="ui large secondary inverted menu">
+					<a class="toc item">
+						<i class="sidebar icon"></i>
+					</a>
+				</div>
+			</div>
+		</header>
+
+    <main class="m-backend-content">
+      {% block backend_content %}{% endblock %}
+    </main>
+  </div>
+
+</body>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script>
+    $(document).ready(function() {
+      $('.ui.sidebar').sidebar('attach events', '.toc.item');
+
+      $('.message .close').on('click', function() {
+		$(this)
+			.closest('.message')
+			.transition('fade')
+			.remove();
+		});
+    });
+  </script>
+{% endblock %}
