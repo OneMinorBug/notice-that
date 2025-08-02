@@ -1,0 +1,50 @@
+{% extends 'layouts/3.html' %}
+
+{% block title %}Delete -{% endblock %}
+
+{% block backend_content %}
+
+  {# This outer segment provides a nice container for our confirmation dialog #}
+  <div class="ui segment" style="max-width: 700px; margin: 4em auto;">
+    
+    <div class="ui red inverted segment">
+      <h2 class="ui header">
+        <i class="trash alternate icon"></i>
+        <div class="content">
+          Confirm Permanent Deletion
+          <div class="sub header">This action cannot be undone.</div>
+        </div>
+      </h2>
+    </div>
+
+    <div class="ui attached segment">
+      <p>You are about to permanently delete the following problem. Please review the details below before proceeding.</p>
+
+      <div class="ui very padded center aligned segment" style="background-color: #fff6f6; border: 1px solid #e0b4b4;">
+        <h3 class="ui header" style="color: #9f3a38;">"{{ object.title }}"</h3>
+      </div>
+      
+      <div class="ui warning message">
+        <div class="header">Consequences of Deletion</div>
+        <ul class="list">
+          <li>The problem itself will be gone forever.</li>
+          <li>All comments and replies associated with this problem will also be permanently deleted.</li>
+        </ul>
+      </div>
+
+      <form class="ui form" method="post" style="text-align: right; margin-top: 2em;">
+        {% csrf_token %}
+        
+        <a href="{% url 'problems:manage_dashboard' %}" class="ui button">
+          Cancel
+        </a>
+        
+        <button type="submit" class="ui negative labeled icon button">
+          <i class="trash icon"></i>
+          Yes, Delete Permanently
+        </button>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

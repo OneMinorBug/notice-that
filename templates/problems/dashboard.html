@@ -1,0 +1,137 @@
+{% extends 'layouts/3.html' %}
+{% load static %}
+
+{% block title %}Dashboard -{% endblock %}
+
+{% block backend_content %}
+
+    <div class="ui teal message">
+        <div class="header">Welcome back, {{ request.user.username }}.</div>
+        Manage NoticeThat's content here.
+    </div>
+	{% for message in messages %}
+		<div class="ui message {{ message.tags }}">
+			<i class="close icon"></i>
+			{{ message }}
+		</div>
+	{% endfor %}
+    
+    <h1 class="ui header">Dashboard</h1>
+
+    <div class="ui four doubling statistics">
+        <div class="statistic"><div class="value">{{ total_problems }}</div><div class="label">Problems</div></div>
+        <div class="statistic"><div class="value">{{ total_comments }}</div><div class="label">Comments</div></div>
+        <div class="statistic"><div class="value">{{ total_users }}</div><div class="label">(Active) Users</div></div>
+        <div class="statistic"><div class="value">{{ problems_published }}</div><div class="label">Published</div></div>
+    </div>
+  
+    <div class="ui clearing segment">
+        <h2 class="ui header left floated" style="margin: 0">All Problems</h2>
+        <a href="{% url 'problems:problem_create' %}" class="ui m-primary button right floated">
+            <i class="plus icon"></i> New Problem
+        </a>
+    </div>
+
+    {% if problems %}
+
+    <div class="ui fluid container m-desktop-only">
+		<table class="ui celled selectable table">
+			<thead>
+				<tr>
+					<th class="center aligned" style="width: 50%;">Problems</th>
+					<th class="center aligned" style="width: 10%;">Status</th>
+					<th class="center aligned" style="width: 10%;">Solution</th>
+					<th class="center aligned" style="width: 15%;">Dates</th>
+					<th class="center aligned" style="width: 5%;">Comments</th>
+					<th class="center aligned" style="width: 10%;">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for problem in problems %}
+				<tr>
+					<td>
+						<div class="ui items">
+							<div class="ui item m-problem-cell">
+								{% if problem.image %}
+									<img class="image m-cover-image" src="{{ problem.image.url }}">
+								{% else %}
+									<img class="image m-cover-image" src="{% static 'images/default_problem_image.png' %}">
+								{% endif %}
+								<div class="content" style="padding-left: 1em;">
+									<a class="header m-preview-text-clamp" href="{{ problem.get_absolute_url }}" target="_blank">{{ problem.title }}</a>
+									<div class="description m-preview-text-clamp">{{ problem.content|striptags|truncatewords:30 }}</div>
+								</div>
+							</div>
+						</div>
+					</td>
+					<td class="center aligned">
+						{% if problem.scheduled_post_at > now %}<span class="ui yellow basic label">Scheduled</span>{% else %}<span class="ui m-primary basic label">Published</span>{% endif %}
+					</td>
+					<td class="center aligned">
+						{% if problem.solution_comment %}
+							{% if problem.solution_post_at > now %}
+								<span class="ui yellow basic label">Scheduled</span>
+							{% else %}
+								<span class="ui m-primary basic label">Published</span>
+							{% endif %}
+						{% else %}
+							<span class="ui red basic label">No Solution</span>
+						{% endif %}
+					</td>
+					<td class="center aligned">
+						<div><b>Post:</b> {{ problem.scheduled_post_at|date:"Y-m-d" }}</div>
+						<div><b>Solution:</b> {{ problem.solution_post_at|date:"Y-m-d" }}</div>
+					</td>
+					<td class="center aligned">
+						<a href="{% url 'admin:problems_comment_changelist' %}?problem__id__exact={{ problem.pk }}" target="_blank">
+							<i class="comments outline icon"></i> {{ problem.comments.count }}
+						</a>
+					</td>
+					<td class="center aligned">
+						<div class="ui icon buttons">
+							<a href="{% url 'problems:problem_edit' problem.pk %}" class="ui blue button" title="Edit"><i class="edit icon"></i></a>
+							<a href="{% url 'problems:problem_delete' problem.pk %}" class="ui red button" title="Delete"><i class="trash alternate outline icon"></i></a>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+    </div>
+
+    <div class="ui divided items m-mobile-only">
+        {% for problem in problems %}
+            <div class="item mobile-item-card">
+                <div class="image">
+                    {% if problem.image %}<img class="m-cover-image" src="{{ problem.image.url }}">{% else %}<img class="m-cover-image" src="{% static 'images/default_problem_image.png' %}">{% endif %}
+                </div>
+                <div class="content">
+                    <a class="header m-preview-text-clamp" href="{{ problem.get_absolute_url }}" target="_blank">{{ problem.title }}</a>
+                    <div class="meta" style="margin-bottom: 1em;">
+                        {% if problem.scheduled_post_at > now %}<span class="ui yellow label">Scheduled</span>{% else %}<span class="ui green label">Published</span>{% endif %}
+                        {% if problem.solution_comment %}<span class="ui teal label">Solution</span>{% endif %}
+                    </div>
+                    <div class="description m-preview-text-clamp">
+                        <p>{{ problem.content|striptags|truncatewords:30 }}</p>
+                    </div>
+                </div>
+				<div class="extra">
+					<i class="comments outline icon"></i> {{ problem.comments.count }} Comments
+					
+					<div class="ui right floated icon buttons">
+					  <a href="{% url 'problems:problem_edit' problem.pk %}" class="ui blue button" title="Edit"><i class="edit icon"></i></a>
+					  <a href="{% url 'problems:problem_delete' problem.pk %}" class="ui red button" title="Delete"><i class="trash alternate outline icon"></i></a>
+					</div>
+				</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+        <div class="ui placeholder segment">
+            <div class="ui icon header"><i class="file alternate outline icon"></i>No problems found.</div>
+            <a href="{% url 'problems:problem_create' %}" class="ui m-primary button">Create Your First Problem</a>
+        </div>
+    {% endif %}
+
+{% endblock %}

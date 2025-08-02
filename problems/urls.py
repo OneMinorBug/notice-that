@@ -12,10 +12,18 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('problem/<str:pk>/', views.problem_detail, name='problem_detail'),
-    path('post/', views.post_problem, name='post_problem'),
     path('search', views.search, name='search'),
     path('upload/', views.upload_image, name='upload_image'),
 ]
+
+management_urlpatterns = [
+    path('manage/', views.manage_dashboard, name='manage_dashboard'),
+    path('manage/problem/new/', views.problem_create_view, name='problem_create'), 
+    path('manage/problem/<str:pk>/edit/', views.problem_update_view, name='problem_edit'),
+    path('manage/problem/<str:pk>/delete/', views.ProblemDeleteView.as_view(), name='problem_delete'),
+]
+
+urlpatterns += management_urlpatterns
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

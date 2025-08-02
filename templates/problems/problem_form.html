@@ -1,0 +1,154 @@
+{% extends 'layouts/3.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}Manage Problem -{% endblock %}
+
+{% block head %}
+  {{ block.super }}
+  {% render_bundle 'math_render' 'css' %}
+  {% render_bundle 'problem_form' 'css' %}
+  <style>
+		#editor-wrapper, #solution-wrapper { border: 1px solid #ccc; }
+		#toolbar-container, #solution-toolbar-container { border-bottom: 1px solid #ccc; }
+		#editor-container, #solution-editor-container { height: 400px; }
+	</style>
+{% endblock %}
+
+
+{% block backend_content %}
+  {% for message in messages %}
+    <div class="ui message {{ message.tags }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+  {% if problem_form.non_field_errors or solution_form.non_field_errors %}
+    <div class="ui error message">
+      {{ problem_form.non_field_errors }}
+      {{ solution_form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <h1 class="ui header">{% if problem %}Edit Problem{% else %}New Problem{% endif %}</h1>
+  
+  <div class="ui segment">
+    <form method="POST" class="ui form {% if problem_form.errors or solution_form.errors %}error{% endif %}" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% if problem_form.non_field_errors or solution_form.non_field_errors %}
+        <div class="ui error message">
+            {{ problem_form.non_field_errors }}
+            {{ solution_form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="ui stackable grid">
+        <div class="sixteen wide column">
+          <h3 class="ui header">Problem Details</h3>
+          <div class="field {% if problem_form.title.errors %}error{% endif %}">
+            <label for="{{ problem_form.title.id_for_label }}">Title</label>
+            {{ problem_form.title }}
+            {% for error in problem_form.title.errors %}<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>{% endfor %}
+          </div>
+
+          <div class="field {% if problem_form.scheduled_post_at.errors %}error{% endif %}">
+              <label>Publish Time (Optional)</label>
+              {{ problem_form.scheduled_post_at }}
+              {% for error in problem_form.scheduled_post_at.errors %}<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>{% endfor %}
+          </div>
+
+          <div class="field {% if problem_form.image.errors %}error{% endif %}">
+            <label>Problem Image</label>
+            <div class="ui placeholder segment" id="image-upload-segment">
+              <div id="image-placeholder-text" class="ui icon header" {% if problem_form.instance.image %}style="display: none;"{% endif %}>
+                <i class="image outline icon"></i>
+                No image has been selected.
+              </div>
+
+              <div id="image-preview-container" {% if not problem_form.instance.image %}style="display: none;"{% endif %}>
+                <img id="image-preview" src="{% if problem_form.instance.image %}{{ problem_form.instance.image.url }}{% endif %}" class="ui centered small rounded image">
+              </div>
+
+              <div style="display: none;">
+                {{ problem_form.image }}
+              </div>
+
+              <div class="ui center aligned container">
+                <button type="button" class="ui primary button" id="select-image-button">
+                  Upload
+                </button>
+                <button type="button" class="ui red basic button" id="clear-image-button" {% if not problem_form.instance.image %}{% endif %}>
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div style="display: none;"><input type="checkbox" name="{{ problem_form.image.html_name }}-clear" id="id_problem-image-clear"></div>
+            {% for error in problem_form.image.errors %}<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>{% endfor %}
+          </div>
+
+          <div class="field {% if problem_form.content.errors %}error{% endif %}">
+            <label>Content</label>
+            <div id="editor-wrapper">
+              <div id="toolbar-container"><!-- WangEditor for Problem --></div>
+              <div id="editor-container"><!-- WangEditor for Problem --></div>
+            </div>
+            {{ problem_form.content }} 
+            {% for error in problem_form.content.errors %}<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>{% endfor %}
+            <div class="ui right aligned fluid container">
+              <button id="preview-problem-btn" class="ui button" type="button"><i class="eye icon"></i> Preview</button>
+            </div>
+            <div class="ui segment" id="preview-problem-container"></div>
+          </div>
+
+        <div class="ui divider"></div>
+
+        <!-- SOLUTION FORM SECTION -->
+        {% if solution_form %}
+        <h3 class="ui header">Solution</h3>
+        <div class="field {% if solution_form.content.errors %}error{% endif %}">
+          {% if problem.solution_comment %}
+            <label>Solution Content (Original author: <b>{{ problem.solution_comment.account.username }}</b>)</label>
+            <div class="ui info visible message">
+              <i class="close icon"></i>
+              You are editing an existing solution. To un-pin this solution, simply clear all the content from the editor below and save.
+            </div>
+          {% else %}
+            <label>Solution Content (Optional)</label>
+            <div class="ui info visible message">
+              <i class="close icon"></i>
+              If you add content here, a new solution comment will be created and automatically pinned to this problem. The author will be set to your account ({{ request.user.username }}).
+            </div>
+          {% endif %}
+
+          <div id="solution-wrapper">
+              <div id="solution-toolbar-container"><!-- WangEditor for Solution --></div>
+              <div id="solution-editor-container"><!-- WangEditor for Solution --></div>
+          </div>
+          {{ solution_form.content }}
+          {% for error in solution_form.content.errors %}<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>{% endfor %}
+          <div class="ui right aligned fluid container">
+            <button id="preview-solution-btn" class="ui button" type="button"><i class="eye icon"></i> Preview</button>
+          </div>
+          <div class="ui segment" id="preview-solution-container"></div>
+        </div>
+
+        <div class="field {% if problem_form.solution_post_at.errors %}error{% endif %}">
+            <label>Solution Publish Time (Optional)</label>
+            {{ problem_form.solution_post_at }}
+            {% for error in problem_form.solution_post_at.errors %}<div class="ui basic red pointing prompt label transition visible">{{ error }}</div>{% endfor %}
+        </div>
+        {% endif %}
+
+        <br>
+        <div style="text-align: right;">
+          <a href="{% url 'problems:manage_dashboard' %}" class="ui button">Cancel</a>
+          <button type="submit" class="ui m-primary button">Save Problem</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  {% render_bundle 'math_render' 'js' %}
+  {% render_bundle 'problem_form' 'js' %}
+{% endblock %}

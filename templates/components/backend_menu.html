@@ -1,0 +1,64 @@
+<div class="ui left sidebar inverted vertical menu m-backend-sidebar">
+
+  <div class="item m-pd-tb-small">
+    <a href="{% url 'problems:home' %}" title="View Public Site">
+      <img class="ui centered image" id="logo" src="{% static 'images/logo.png' %}">
+    </a>
+    <p class="ui centered small header">
+      Content Management
+    </p>
+  </div>
+
+  <a href="{% url 'problems:manage_dashboard' %}" class="item {% if request.resolver_match.url_name == 'manage_dashboard' %}active{% endif %}">
+    <b>Dashboard</b>
+    <i class="cog icon"></i>
+  </a>
+
+  <a href="{% url 'problems:problem_create' %}" class="item {% if request.resolver_match.url_name == 'problem_create' %}active{% endif %}">
+    <b>New Problem</b>
+    <i class="plus icon"></i>
+  </a>
+
+  <div class="item">
+    <div class="header">MANAGEMENT</div>
+    <div class="menu">
+      <a href="{% url 'admin:problems_problem_changelist' %}" class="item" target="_blank">
+        Problems (Adv.) <i class="database icon"></i>
+      </a>
+      <a href="{% url 'admin:problems_comment_changelist' %}" class="item" target="_blank">
+        Comments <i class="comments outline icon"></i>
+      </a>
+      <a href="{% url 'admin:auth_user_changelist' %}" class="item" target="_blank">
+        Users <i class="users icon"></i>
+      </a>
+      <a href="{% url 'admin:profiles_profile_changelist' %}" class="item" target="_blank">
+        Profiles <i class="user circle icon"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- to push the user menu to the bottom -->
+  <div class="item" style="flex-grow: 1;"></div>
+
+  <div class="m-backend-account item">
+    <div class="header">ACCOUNT</div>
+    <div class="menu">
+      <a href="{% url 'profiles:profile' %}" class="item m-block">
+        <div class="ui grid">
+          <div class="four wide column">
+            <img class="ui avatar image" src="{{ request.user.profile.profile_picture.url }}" onerror="this.onerror=null;this.src='{% static 'images/default_profile.png' %}';">
+          </div>
+          <div class="twelve wide column">
+            <b>{{ request.user.username }}</b>
+            <div class="description">View Profile</div>
+          </div>
+        </div>
+      </a>
+      <a class="item m-block" href="{% url 'account_logout' %}">
+        <i class="logout icon"></i>
+        Log Out
+      </a>
+    </div>
+  </div>
+
+</div>
