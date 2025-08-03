@@ -33,7 +33,7 @@
 					</form>
 				<div class="results"></div>
 			</div>
-			{% for problem in problems reversed %}
+			{% for problem in problems %}
 				<a class="item" target="_blank" href="{% url 'problems:problem_detail' problem.id %}">
 					<span>
 						<i class="small m-primary circle icon"></i>
