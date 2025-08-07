@@ -12,11 +12,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const $textarea = document.getElementById('comment-content');
     if (!editorContainer || !$textarea) return; // Exit if the editor isn't on this page
 
+    const previewContainer = document.getElementById('preview-container');
+
     const editorConfig = {
         placeholder: 'Type your response here...',
         onChange(editor) {
             const html = editor.getHtml();
             $textarea.value = html; // Sync content
+            if (previewContainer && previewContainer.style.display === 'block') {
+                previewContainer.innerHTML = html;
+                renderMath(previewContainer); // Re-render math on every change
+            }
         },
         hoverbarKeys: {
             formula: {
@@ -63,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Preview button click handler
     const previewBtn = document.getElementById('preview-btn');
-    const previewContainer = document.getElementById('preview-container');
     if (!previewBtn || !previewContainer) return;
 
     previewBtn.addEventListener('click', () => {
@@ -72,10 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isVisible) {
             previewContainer.style.display = 'none';
             previewContainer.innerHTML = '';
+            previewBtn.innerHTML = '<i class="eye icon"></i> Preview'
         } else {
             previewContainer.style.display = 'block';
             const editorHtml = editor.getHtml();
             previewContainer.innerHTML = editorHtml;
+            previewBtn.innerHTML = '<i class="eye slash icon"></i> Hide Preview';
 
             renderMath(previewContainer);
         }

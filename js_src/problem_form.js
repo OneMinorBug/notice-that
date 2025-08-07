@@ -8,7 +8,7 @@ Boot.registerModule(formulaModule);
 i18nChangeLanguage('en');
 
 // Reusable function to initialize a WangEditor instance.
-function initWangEditor(editorContainerId, toolbarContainerId, textareaId, placeholderText) {
+function initWangEditor(editorContainerId, toolbarContainerId, textareaId, previewContainerId, placeholderText) {
     const editorContainer = document.getElementById(editorContainerId);
     const toolbarContainer = document.getElementById(toolbarContainerId);
     const textarea = document.getElementById(textareaId);
@@ -17,7 +17,14 @@ function initWangEditor(editorContainerId, toolbarContainerId, textareaId, place
     const editorConfig = {
         placeholder: placeholderText,
         onChange(editor) {
-            textarea.value = editor.getHtml();
+            const html = editor.getHtml();
+            textarea.value = html;
+
+            const previewContainer = document.getElementById(previewContainerId);
+            if (previewContainer && previewContainer.style.display === 'block') {
+                previewContainer.innerHTML = html;
+                renderMath(previewContainer); // Re-render math on every change
+            }
         },
         hoverbarKeys: {
             formula: {
@@ -83,7 +90,7 @@ function setupPreviewButton(previewBtnId, previewContainerId, getEditorContent) 
             previewContainer.style.display = 'block';
             const editorHtml = getEditorContent();
             previewContainer.innerHTML = editorHtml;
-            previewBtn.innerHTML = '<i class="close icon"></i> Close';
+            previewBtn.innerHTML = '<i class="eye slash icon"></i> Hide Preview';
 
             renderMath(previewContainer);
         }
@@ -161,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'editor-container',
         'toolbar-container',
         'problem-content',
+        'preview-problem-container',
         'Enter the problem here...'
     );
 
@@ -168,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'solution-editor-container',
         'solution-toolbar-container',
         'comment-content',
+        'preview-solution-container',
         'Enter the solution here...'
     );
 

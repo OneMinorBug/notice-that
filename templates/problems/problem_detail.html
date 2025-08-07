@@ -44,7 +44,7 @@
         <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
       {% endif %}
     </div>
-    {% if problem.content|striptags %}
+    {% if problem.content %}
       <div class="ui attached segment m-pd-tb-medium m-pd-lr">
         <div class="m-medium-text" id="problem-content-segment">{{ problem.content|safe }}</div>
       </div>
@@ -64,8 +64,8 @@
             {% endfor %}
             <div id="preview-container"></div>
           </div>
-          <div class="ui right aligned container">
-            <button id="preview-btn" class="ui button" type="button">Preview</button>
+          <div class="ui right aligned fluid container">
+            <button id="preview-btn" class="ui button" type="button"><i class="eye icon"></i> Preview</button>
             <button class="ui m-primary submit labeled icon button" type="submit">
               <i class="m-primary icon edit"></i> Send
             </button>
