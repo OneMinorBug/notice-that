@@ -39,9 +39,9 @@
     </div>
     <div class="ui attached segment m-pd-lr" id="problem-img-segment">
       {% if problem.image %}
-        <img src="{{ problem.image.url }}" class="ui rounded fluid image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
+        <img src="{{ problem.image.url }}" class="ui centered rounded image" onerror="this.onerror=null;this.src='{% static 'images/default_problem_image.png' %}';">
       {% else %}
-        <img src="{% static 'images/default_problem_image.png' %}" class="ui rounded fluid image">
+        <img src="{% static 'images/default_problem_image.png' %}" class="ui centered rounded image">
       {% endif %}
     </div>
     {% if problem.content %}
