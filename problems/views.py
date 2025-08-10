@@ -123,6 +123,13 @@ def problem_detail(request, pk):
     visible_top_level_comments = comments_qs.filter(parent=None)
     user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
 
+    meta_image_url = None
+    if not problem.image:
+        from django.contrib.staticfiles.storage import staticfiles_storage
+        meta_image_url = request.build_absolute_uri(staticfiles_storage.url('images/NoticeThat.jpg'))
+    else:
+        meta_image_url = request.build_absolute_uri(problem.image.url)
+
     return render(request, 'problems/problem_detail.html', {
         'problem': problem,
         'comments': visible_top_level_comments,
@@ -133,6 +140,7 @@ def problem_detail(request, pk):
         'total_comments': total_visible_comments,
         'show_solution': show_solution,
         'now': timezone.now(),
+        'meta_image_url': meta_image_url,
     })
 
 @login_required

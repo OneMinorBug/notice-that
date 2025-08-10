@@ -6,8 +6,8 @@
 {% block og-title %}{{ problem.title|safe }}{% endblock %}
 {% block og-description %}{{ problem.content|striptags|truncatechars:200 }}{% endblock %}
 {% if problem.image %}
-  {% block og-image %}{{ problem.image.url }}{% endblock %}
-  {% block tw-image %}{{ problem.image.url }}{% endblock %}
+  {% block og-image %}{{ meta_image_url }}{% endblock %}
+  {% block tw-image %}{{ meta_image_url }}{% endblock %}
 {% endif %}
 
 {% block head %}
