@@ -19,14 +19,14 @@ from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
-from problems.views import view_log_file
+from _problems.views import view_log_file
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 from django.http import JsonResponse, HttpResponseNotFound
 
 #Sitemaps
 from django.contrib.sitemaps.views import sitemap
-from problems.sitemaps import *
+from _problems.sitemaps import *
 
 sitemaps = {
     'static' : StaticSitemap,
@@ -43,9 +43,9 @@ urlpatterns = [
     path("health/", health_check, name="health_check"),
     path('notadmin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('profiles/', include('profiles.urls')),
+    path('profiles/', include('_profiles.urls')),
     path('logs/<filename>/', view_log_file, name="view_log_file"),
-    path('', include('problems.urls')),
+    path('', include('_problems.urls')),
 ]
 
 if settings.DEBUG:

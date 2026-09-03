@@ -69,9 +69,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'webpack_loader',
     # Local apps
-    'accounts',
-    'problems',
-    'profiles',
+    '_accounts',
+    '_problems',
+    '_profiles',
 ]
 
 MIDDLEWARE = [
@@ -158,7 +158,7 @@ ACCOUNT_LOGIN_METHODS = ['username', 'email']
 ACCOUNT_UNIQUE_USERNAME = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_SUBJECT_PREFIX = '[NoticeThat] '
-LOGIN_REDIRECT_URL = 'problems:home'
+LOGIN_REDIRECT_URL = '_problems:home'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'account_login'
 
 
