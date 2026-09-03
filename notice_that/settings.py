@@ -20,7 +20,7 @@ import dj_database_url
 
 env = Env()
 env.read_env()
-ENVIRONMENT = env('ENVIRONMENT', default='production')
+ENVIRONMENT = env.str('ENVIRONMENT', default='production')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,7 +41,7 @@ DEBUG = True if ENVIRONMENT == 'development' else False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.notice-that.com']
 
 if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
-    ALLOWED_HOSTS.append(env('RENDER_EXTERNAL_HOSTNAME'))
+    ALLOWED_HOSTS.append(env.str('RENDER_EXTERNAL_HOSTNAME'))
 
 CSRF_TRUSTED_ORIGINS = ['https://*.notice-that.com', 'https://*.onrender.com']
 
@@ -114,10 +114,10 @@ WSGI_APPLICATION = 'notice_that.wsgi.application'
 DATABASES = { 'default': {} }
 
 if ENVIRONMENT == 'production':
-    DATABASES['default'] = dj_database_url.parse(
-        env('DATABASE_URL'), 
+    DATABASES['default'] = dict(dj_database_url.parse(
+        env.str('DATABASE_URL'), 
         conn_max_age=600
-    )
+    ))
 else:
     DATABASES['default'] = {
         "ENGINE": "django.db.backends.mysql",
