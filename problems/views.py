@@ -96,6 +96,7 @@ def problem_detail(request, pk):
                 except Comment.DoesNotExist:
                     # Handle case where parent comment doesn't exist or belongs to another problem
                     messages.error(request, "Invalid reply target.")
+                    comment_form.add_error(None, "Invalid reply target.")
                     # Fall through to render the form with an error
             if not comment_form.errors: # Double-check no errors were added during parent lookup
                 comment.save()
@@ -109,7 +110,7 @@ def problem_detail(request, pk):
         
     show_solution = request.user.is_staff or (problem.solution_post_at and problem.solution_post_at <= timezone.now())
     pinned_comment = problem.solution_comment if show_solution else None
-    comments_qs = problem.comments.all().prefetch_related('replies', 'account__profile')
+    comments_qs = problem.comments.all().prefetch_related('replies', 'account__profile') # type: ignore
 
     if not show_solution and problem.solution_comment:
         solution_thread_ids = get_comment_tree_ids(problem.solution_comment)
@@ -121,7 +122,7 @@ def problem_detail(request, pk):
         comments_qs = comments_qs.exclude(pk=problem.solution_comment.pk)
 
     visible_top_level_comments = comments_qs.filter(parent=None)
-    user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False
+    user_has_commented = problem.comments.filter(account=request.user).exists() if request.user.is_authenticated else False # type: ignore
 
     meta_image_url = None
     if not problem.image:
@@ -290,7 +291,7 @@ class StaffRequiredMixin(UserPassesTestMixin):
     This is the Class-Based View equivalent of the @staff_member_required decorator.
     """
     def test_func(self):
-        return self.request.user.is_staff
+        return self.request.user.is_staff # type: ignore
 
 class DeleteSuccessMessageMixin:
     """
@@ -300,11 +301,11 @@ class DeleteSuccessMessageMixin:
     success_message = "" # Default success message
 
     def post(self, request, *args, **kwargs):
-        obj = self.get_object()
+        obj = self.get_object() # type: ignore
         success_message = self.success_message % obj.__dict__
-        messages.success(self.request, success_message)
+        messages.success(self.request, success_message) # type: ignore
         # The super().post() call will then handle the actual deletion and the subsequent redirect.
-        return super().post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs) # type: ignore
     
 class ProblemDeleteView(StaffRequiredMixin, DeleteSuccessMessageMixin, DeleteView):
     model = Problem
